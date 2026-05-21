@@ -2,7 +2,12 @@
 
 GrantStack is a serverless project-intake and grant-screening product for capex-heavy facility expansion projects. A user submits project basics through the landing page, the API accepts the request immediately, asynchronous workers generate a source-backed incentive-screening memo, and the user views the result through a private tokenized report link.
 
-Live surfaces:
+## Live Demo
+
+- Live site: https://grantstack.pages.dev
+- GitHub repository: https://github.com/manynames3/grantstack
+
+## Live Surfaces
 
 - Landing page: https://grantstack.pages.dev
 - API index: https://rx967db2q9.execute-api.us-east-1.amazonaws.com/projects
