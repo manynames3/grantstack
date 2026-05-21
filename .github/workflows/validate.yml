@@ -1,4 +1,4 @@
-name: Validate GrantStack Backend
+name: Validate GrantStack
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ on:
       - ".github/workflows/validate.yml"
 
 jobs:
-  validate:
+  validate-backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,13 +22,13 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform fmt
-        run: terraform -chdir=terraform fmt -check
+        run: terraform -chdir=grantstack-backend/terraform fmt -check -recursive
 
       - name: Terraform init
-        run: terraform -chdir=terraform init -backend=false
+        run: terraform -chdir=grantstack-backend/terraform init -backend=false
 
       - name: Terraform validate
-        run: terraform -chdir=terraform validate
+        run: terraform -chdir=grantstack-backend/terraform validate
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -36,10 +36,10 @@ jobs:
           python-version: "3.12"
 
       - name: Compile Lambda handlers
-        run: python -m py_compile lambda/ingest_handler.py lambda/processor_handler.py lambda/report_handler.py lambda/source_refresh_handler.py
+        run: python -m py_compile grantstack-backend/lambda/ingest_handler.py grantstack-backend/lambda/processor_handler.py grantstack-backend/lambda/report_handler.py grantstack-backend/lambda/source_refresh_handler.py
 
       - name: Install Python test dependencies
         run: python -m pip install boto3
 
       - name: Run handler tests
-        run: python -m unittest discover -s tests
+        run: python -m unittest discover -s grantstack-backend/tests
