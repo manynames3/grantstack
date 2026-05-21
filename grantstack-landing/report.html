@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="GrantStack project report." />
+    <title>GrantStack Report</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="report-page">
+    <header class="site-header report-header-nav" aria-label="Report navigation">
+      <a class="brand" href="/" aria-label="GrantStack home">
+        <span class="brand-mark" aria-hidden="true">G</span>
+        <span>GrantStack</span>
+      </a>
+      <a class="nav-action" href="/">New project</a>
+    </header>
+
+    <main class="report-main">
+      <section class="section-inner report-shell">
+        <div class="report-title">
+          <p class="section-label">Private project report</p>
+          <h1>Incentive screen</h1>
+          <p id="report-status">Loading project status...</p>
+        </div>
+
+        <div class="report-card" id="report-card">
+          <div class="loading-block">
+            <strong>Preparing your report</strong>
+            <span>The backend is checking the project status.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/report.js" defer></script>
+  </body>
+</html>

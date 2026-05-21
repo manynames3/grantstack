@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="GrantStack helps expansion teams turn facility specs into structured grant and incentive strategy in minutes."
+    />
+    <title>GrantStack | Incentive Strategy for Expansion Teams</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/assets/hero-industrial-floor.jpg" as="image" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="GrantStack home">
+        <span class="brand-mark" aria-hidden="true">G</span>
+        <span>GrantStack</span>
+      </a>
+      <nav class="nav-links" aria-label="Main menu">
+        <a href="#workflow">Workflow</a>
+        <a href="#proof">Proof</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#intake">Analyze</a>
+      </nav>
+      <a class="nav-action" href="#intake">Start project</a>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="eyebrow">AI grant intelligence for facility expansion</p>
+          <h1 id="hero-title">GrantStack</h1>
+          <p class="hero-copy">
+            Find public funding angles for capex-heavy projects before your team spends weeks chasing the wrong
+            programs.
+          </p>
+          <div class="hero-actions" aria-label="Primary actions">
+            <a class="button button-primary" href="#intake">Analyze a project</a>
+            <a class="button button-secondary" href="#workflow">See the system</a>
+          </div>
+        </div>
+        <div class="hero-metrics" aria-label="GrantStack capabilities">
+          <div>
+            <strong>10 min</strong>
+            <span>project intake</span>
+          </div>
+          <div>
+            <strong>3 layers</strong>
+            <span>fit, risks, next steps</span>
+          </div>
+          <div>
+            <strong>1 memo</strong>
+            <span>for buyer conversations</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="positioning">
+        <div class="section-inner positioning-grid">
+          <div>
+            <p class="section-label">Built for high-stakes expansion</p>
+            <h2>Turn a site plan into a defensible incentive strategy.</h2>
+          </div>
+          <p>
+            GrantStack reads the project fundamentals that economic development teams care about: location,
+            capital investment, jobs, facility type, timing, and public benefit. It then prepares a structured
+            analysis your team can use to prioritize programs, shape narratives, and move faster.
+          </p>
+        </div>
+      </section>
+
+      <section id="workflow" class="workflow">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="section-label">Workflow</p>
+            <h2>Decoupled intake, fast answers, no idle workers.</h2>
+          </div>
+          <div class="workflow-grid">
+            <article class="workflow-step">
+              <span>01</span>
+              <h3>Submit specs</h3>
+              <p>Capture location, capex, job creation, and facility type through a clean project intake.</p>
+            </article>
+            <article class="workflow-step">
+              <span>02</span>
+              <h3>Queue analysis</h3>
+              <p>The backend accepts the project instantly and moves deep analysis to an async worker.</p>
+            </article>
+            <article class="workflow-step">
+              <span>03</span>
+              <h3>Match context</h3>
+              <p>Relevant incentive knowledge is retrieved from a serverless vector index.</p>
+            </article>
+            <article class="workflow-step">
+              <span>04</span>
+              <h3>Structure the case</h3>
+              <p>The LLM produces a report with fit, risk flags, and next actions saved to DynamoDB.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="proof" class="product-view">
+        <div class="section-inner product-grid">
+          <div class="product-copy">
+            <p class="section-label">What teams get</p>
+            <h2>A first-pass grant screen that reads like a strategy memo.</h2>
+            <p>
+              GrantStack does not replace counsel or incentive negotiation. It gives operators a sharper first
+              read, so the right experts start from structured context instead of raw notes.
+            </p>
+            <ul class="value-list">
+              <li>Ranked program categories for economic development, workforce, infrastructure, and site readiness.</li>
+              <li>Eligibility strengths tied to jobs, capex, location, and operational commitments.</li>
+              <li>Risk flags that keep teams from over-promising before program rules are validated.</li>
+            </ul>
+          </div>
+
+          <div class="report-panel" aria-label="Sample GrantStack analysis report">
+            <div class="report-topbar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="report-header">
+              <div>
+                <p>Project screen</p>
+                <h3>Advanced Manufacturing Expansion</h3>
+              </div>
+              <strong>88</strong>
+            </div>
+            <div class="report-row">
+              <span>Location signal</span>
+              <strong>Southeast growth market</strong>
+            </div>
+            <div class="report-row">
+              <span>Capital plan</span>
+              <strong>$24.8M capex</strong>
+            </div>
+            <div class="report-row">
+              <span>Jobs impact</span>
+              <strong>140 net-new roles</strong>
+            </div>
+            <div class="recommendations">
+              <h4>Recommended program stack</h4>
+              <div>Economic development incentive</div>
+              <div>Workforce training grant</div>
+              <div>Infrastructure support</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" class="pricing-section">
+        <div class="section-inner pricing-grid">
+          <div class="pricing-copy">
+            <p class="section-label">Paid pilot</p>
+            <h2>Start with one expansion screen before committing to a platform.</h2>
+            <p>
+              GrantStack is best for teams with a real facility project, a short diligence window, and a need to
+              decide whether public funding is worth deeper pursuit.
+            </p>
+          </div>
+          <div class="pricing-panel">
+            <p class="pricing-kicker">First paid report</p>
+            <div class="price">$750</div>
+            <p class="pricing-note">AI-assisted first-pass incentive screen with structured fit, risks, and action plan.</p>
+            <ul class="value-list compact">
+              <li>Project intake and structured analysis</li>
+              <li>Downloadable report-ready summary</li>
+              <li>Clear disclaimer for program validation</li>
+            </ul>
+            <a class="button button-primary submit-button" href="#intake">Run a pilot screen</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="intake" class="intake-section">
+        <div class="section-inner intake-grid">
+          <div class="intake-copy">
+            <p class="section-label">Live intake</p>
+            <h2>Send a project into the GrantStack backend.</h2>
+            <p>
+              This form submits to the deployed serverless API. You will receive a project ID immediately while
+              the backend processes the analysis asynchronously.
+            </p>
+          </div>
+
+          <form class="intake-form" id="project-form">
+            <div class="field-grid">
+              <label>
+                <span>Location</span>
+                <input name="location" autocomplete="address-level2" required placeholder="Raleigh, NC" />
+              </label>
+              <label>
+                <span>Facility type</span>
+                <input name="facility_type" required placeholder="Advanced manufacturing" />
+              </label>
+              <label>
+                <span>Capital investment</span>
+                <input name="capex" type="number" min="1" step="1000" required placeholder="12500000" />
+              </label>
+              <label>
+                <span>New jobs</span>
+                <input name="jobs" type="number" min="0" step="1" required placeholder="82" />
+              </label>
+              <label class="full-field">
+                <span>Business email</span>
+                <input name="contact_email" type="email" autocomplete="email" required placeholder="you@company.com" />
+              </label>
+              <label>
+                <span>Company</span>
+                <input name="company_name" autocomplete="organization" placeholder="Acme Manufacturing" />
+              </label>
+              <label>
+                <span>Average wage</span>
+                <input name="average_wage" type="number" min="1" step="1000" placeholder="68000" />
+              </label>
+              <label>
+                <span>Decision timeline</span>
+                <input name="project_timeline" placeholder="Site decision in 90 days" />
+              </label>
+              <label>
+                <span>Competing locations</span>
+                <input name="competing_locations" placeholder="SC, TN, Mexico" />
+              </label>
+            </div>
+            <button class="button button-primary submit-button" type="submit">Submit project</button>
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="section-inner footer-grid">
+        <span>GrantStack</span>
+        <span>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </span>
+      </div>
+    </footer>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>

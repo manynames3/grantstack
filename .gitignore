@@ -1,0 +1,16 @@
+.DS_Store
+.env
+.env.*
+.wrangler/
+node_modules/
+dist/
+build/
+coverage/
+__pycache__/
+*.py[cod]
+*.log
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+*_handler.zip

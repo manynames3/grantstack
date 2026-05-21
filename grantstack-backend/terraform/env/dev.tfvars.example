@@ -1,0 +1,49 @@
+aws_region   = "us-east-1"
+project_name = "grantstack"
+environment  = "dev"
+
+allowed_origins = ["https://grantstack.pages.dev"]
+
+jwt_authorizer = {
+  enabled  = false
+  issuer   = ""
+  audience = []
+}
+
+mock_external_calls = true
+
+llm_provider                  = "openai"
+llm_api_endpoint              = "https://api.openai.com/v1/chat/completions"
+llm_api_key_secret_arn        = null
+llm_model                     = "gpt-4.1-mini"
+embedding_provider            = "openai"
+embedding_api_endpoint        = "https://api.openai.com/v1/embeddings"
+embedding_api_key_secret_arn  = null
+embedding_model               = "text-embedding-3-small"
+vector_db_provider            = "pinecone"
+vector_db_endpoint            = ""
+vector_db_api_key_secret_arn  = null
+http_client_timeout_seconds   = 20
+
+project_ttl_days         = 30
+api_throttle_burst_limit = 20
+api_throttle_rate_limit  = 10
+
+enable_xray_tracing        = true
+enable_api_access_logs     = true
+enable_cloudwatch_dashboard = true
+enable_source_refresh      = true
+
+processor_memory_size          = 1024
+processor_timeout_seconds      = 900
+sqs_visibility_timeout_seconds = 960
+dlq_max_receive_count          = 3
+log_retention_in_days          = 14
+
+enable_cloudwatch_alarms = true
+alarm_actions            = []
+
+tags = {
+  Owner       = "dealfinder-admin"
+  CostProfile = "minimal-dev"
+}

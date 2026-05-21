@@ -1,0 +1,185 @@
+{
+  "version": "2026-05-21",
+  "sources": [
+    {
+      "id": "ga-job-and-quality-jobs-tax-credits",
+      "program_name": "Georgia Job Tax Credit and Quality Jobs Tax Credit",
+      "category": "Tax credit",
+      "jurisdiction": "Georgia",
+      "states": ["GA"],
+      "min_jobs": 25,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "industrial", "distribution", "logistics", "data processing", "headquarters"],
+      "location_keywords": ["georgia", "ga", "augusta", "atlanta", "savannah"],
+      "evidence_summary": "Georgia's flagship job-related tax credits evaluate job creation, location, industry, wage levels, and maintenance of qualifying jobs.",
+      "source_note": "Official Georgia Department of Revenue tax-credit summary page.",
+      "source_url": "https://dor.georgia.gov/tax-credit-summaries",
+      "last_verified": "2026-05-21",
+      "diligence_questions": [
+        "Which county tier or special zone applies to the final site?",
+        "Do the proposed jobs fall within a qualifying industry sector?",
+        "Will wage levels support Quality Jobs Tax Credit review?"
+      ]
+    },
+    {
+      "id": "ga-quick-start",
+      "program_name": "Georgia Quick Start",
+      "category": "Workforce training",
+      "jurisdiction": "Georgia",
+      "states": ["GA"],
+      "min_jobs": 25,
+      "min_capex": 0,
+      "facility_keywords": ["manufacturing", "advanced", "life sciences", "industrial", "assembly", "distribution"],
+      "location_keywords": ["georgia", "ga", "augusta", "atlanta", "savannah"],
+      "evidence_summary": "Georgia Quick Start provides customized workforce training for qualified new and expanding companies and is positioned as an in-kind discretionary incentive.",
+      "source_note": "Official Georgia Quick Start program page.",
+      "source_url": "https://www.georgiaquickstart.org/about-us/",
+      "last_verified": "2026-05-21",
+      "diligence_questions": [
+        "What roles, skills, and hiring waves must the training plan cover?",
+        "When must training start relative to construction and commissioning?",
+        "Which technical college or Quick Start team would support delivery?"
+      ]
+    },
+    {
+      "id": "ga-reba-onegeorgia-local-support",
+      "program_name": "Georgia discretionary project finance and local support",
+      "category": "Discretionary cash grant",
+      "jurisdiction": "Georgia",
+      "states": ["GA"],
+      "min_jobs": 50,
+      "min_capex": 5000000,
+      "facility_keywords": ["manufacturing", "industrial", "headquarters", "distribution", "logistics"],
+      "location_keywords": ["georgia", "ga", "augusta", "atlanta", "savannah"],
+      "evidence_summary": "Georgia economic-development finance resources can support private job creation and expansion projects, often coordinated with state and local development partners.",
+      "source_note": "Official Georgia Department of Community Affairs REBA program page.",
+      "source_url": "https://dca.georgia.gov/community-assistance/community-development/regional-economic-business-assistance-reba",
+      "last_verified": "2026-05-21",
+      "diligence_questions": [
+        "Is the project competitive with another state or local jurisdiction?",
+        "Which public infrastructure or site-readiness gap needs support?",
+        "What local match or development authority participation is available?"
+      ]
+    },
+    {
+      "id": "nc-jdig",
+      "program_name": "North Carolina Job Development Investment Grant",
+      "category": "Discretionary cash grant",
+      "jurisdiction": "North Carolina",
+      "states": ["NC"],
+      "min_jobs": 50,
+      "min_capex": 5000000,
+      "facility_keywords": ["manufacturing", "advanced", "headquarters", "industrial", "distribution", "technology"],
+      "location_keywords": ["north carolina", "nc", "raleigh", "charlotte", "greensboro", "durham"],
+      "evidence_summary": "JDIG is a performance-based discretionary incentive for competitive job-creation and investment projects in North Carolina.",
+      "source_note": "Official North Carolina Department of Commerce JDIG program page.",
+      "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/job-development-investment-grant-jdig",
+      "last_verified": "2026-05-21",
+      "diligence_questions": [
+        "Can the company document a competitive location decision?",
+        "How do proposed wages compare with the county average wage?",
+        "What job and investment targets can the company commit to annually?"
+      ]
+    },
+    {
+      "id": "nc-one-nc-fund",
+      "program_name": "One North Carolina Fund",
+      "category": "Discretionary cash grant",
+      "jurisdiction": "North Carolina",
+      "states": ["NC"],
+      "min_jobs": 20,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "distribution", "headquarters", "technology"],
+      "location_keywords": ["north carolina", "nc", "raleigh", "charlotte", "greensboro", "durham"],
+      "evidence_summary": "OneNC is a discretionary cash-grant program used to respond quickly to competitive job-creation projects and requires local participation.",
+      "source_note": "Official North Carolina Department of Commerce One North Carolina Fund page.",
+      "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/one-north-carolina-fund",
+      "last_verified": "2026-05-21",
+      "diligence_questions": [
+        "What local match can the community provide?",
+        "Which job, wage, and investment commitments are realistic for the performance agreement?",
+        "How urgent is the competitive location decision?"
+      ]
+    },
+    {
+      "id": "nc-customized-training",
+      "program_name": "North Carolina Customized Training Program",
+      "category": "Workforce training",
+      "jurisdiction": "North Carolina",
+      "states": ["NC"],
+      "min_jobs": 10,
+      "min_capex": 0,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "technology", "assembly", "distribution"],
+      "location_keywords": ["north carolina", "nc", "raleigh", "charlotte", "greensboro", "durham"],
+      "evidence_summary": "North Carolina's Customized Training Program provides training and support services through the state's community college network for new, expanding, and existing businesses.",
+      "source_note": "Official North Carolina Department of Commerce customized training page.",
+      "source_url": "https://www.commerce.nc.gov/grants-incentives/workforce-grants/customized-training",
+      "last_verified": "2026-05-21",
+      "diligence_questions": [
+        "Which community college would deliver the training plan?",
+        "What technical skills and productivity outcomes should training address?",
+        "What hiring schedule should the training support?"
+      ]
+    },
+    {
+      "id": "nc-job-ready-grants",
+      "program_name": "North Carolina Job Ready Workforce Investment Grants",
+      "category": "Workforce training",
+      "jurisdiction": "North Carolina",
+      "states": ["NC"],
+      "min_jobs": 20,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "distribution", "technology"],
+      "location_keywords": ["north carolina", "nc", "raleigh", "charlotte", "greensboro", "durham"],
+      "evidence_summary": "Job Ready Grants support recruitment, talent development, and work-based learning activities tied to economic development projects in North Carolina.",
+      "source_note": "Official North Carolina Department of Commerce Job Ready Grants page.",
+      "source_url": "https://www.commerce.nc.gov/grants-incentives/workforce-grants/job-ready-grants",
+      "last_verified": "2026-05-21",
+      "diligence_questions": [
+        "Which local workforce board would sponsor or coordinate the application?",
+        "What recruiting and talent pipeline gaps need funding?",
+        "How many new hires will be tied directly to the project?"
+      ]
+    },
+    {
+      "id": "eda-public-works",
+      "program_name": "EDA Public Works",
+      "category": "Infrastructure",
+      "jurisdiction": "Federal",
+      "states": [],
+      "min_jobs": 25,
+      "min_capex": 5000000,
+      "facility_keywords": ["manufacturing", "industrial", "infrastructure", "site readiness", "business park", "water", "sewer", "broadband"],
+      "location_keywords": [],
+      "evidence_summary": "EDA Public Works supports public infrastructure that helps communities attract industry, encourage business expansion, and create or retain long-term jobs.",
+      "source_note": "Official Grants.gov listing for EDA Public Works and Economic Adjustment Assistance programs.",
+      "source_url": "https://simpler.grants.gov/opportunity/b5365cea-b07c-4e8d-8313-e23ab0fd3766",
+      "last_verified": "2026-05-21",
+      "diligence_questions": [
+        "Is there a public infrastructure gap connected to the project?",
+        "Is an eligible public or nonprofit applicant available?",
+        "Does the project align with a regional economic development strategy?"
+      ]
+    },
+    {
+      "id": "eda-economic-adjustment-assistance",
+      "program_name": "EDA Economic Adjustment Assistance",
+      "category": "Infrastructure",
+      "jurisdiction": "Federal",
+      "states": [],
+      "min_jobs": 25,
+      "min_capex": 5000000,
+      "facility_keywords": ["manufacturing", "industrial", "infrastructure", "workforce", "site readiness", "resiliency"],
+      "location_keywords": [],
+      "evidence_summary": "EDA Economic Adjustment Assistance can support strategy and implementation projects, including infrastructure improvements and workforce-related activities, in regions facing economic change.",
+      "source_note": "Official Grants.gov listing for EDA Public Works and Economic Adjustment Assistance programs.",
+      "source_url": "https://simpler.grants.gov/opportunity/b5365cea-b07c-4e8d-8313-e23ab0fd3766",
+      "last_verified": "2026-05-21",
+      "diligence_questions": [
+        "What adverse economic change or regional need supports the public case?",
+        "Is the proposed activity included in a CEDS or equivalent strategy?",
+        "Who is the eligible applicant and match provider?"
+      ]
+    }
+  ]
+}
