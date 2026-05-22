@@ -13,6 +13,7 @@ os.environ.setdefault("AWS_DEFAULT_REGION", "us-east-1")
 
 import ingest_handler  # noqa: E402
 import analytics_handler  # noqa: E402
+import partner_portal_service  # noqa: E402
 import processor_handler  # noqa: E402
 import source_refresh_handler  # noqa: E402
 import sync_vector_index  # noqa: E402
@@ -234,6 +235,171 @@ class SourceRefreshTests(unittest.TestCase):
 
         self.assertEqual(result["status"], "failed")
         self.assertIn("https", result["error"])
+
+
+class InMemoryPartnerPortalRepository:
+    def __init__(self) -> None:
+        self.projects = {}
+        self.partners = {}
+        self.routings = {}
+        self.payout_ledgers = []
+        self.audit_entries = []
+
+    def get_project(self, project_id: str):
+        return self.projects.get(project_id)
+
+    def update_project_status(self, project_id: str, status: str) -> None:
+        self.projects[project_id]["status"] = status
+
+    def get_partner(self, partner_id: str):
+        return self.partners.get(partner_id)
+
+    def put_partner(self, partner) -> None:
+        self.partners[partner.partner_id] = partner
+
+    def get_routing(self, project_id: str):
+        return self.routings.get(project_id)
+
+    def put_routing(self, routing) -> None:
+        self.routings[routing.project_id] = routing
+
+    def put_payout_ledger(self, ledger) -> None:
+        self.payout_ledgers.append(ledger)
+
+    def put_audit_entry(self, entry) -> None:
+        self.audit_entries.append(entry)
+
+
+class PartnerPortalServiceTests(unittest.TestCase):
+    def build_repository(self) -> InMemoryPartnerPortalRepository:
+        repository = InMemoryPartnerPortalRepository()
+        repository.projects["project-oh"] = {
+            "project_id": "project-oh",
+            "status": "COMPLETED",
+            "input_spec": {
+                "location": "Columbus, OH",
+                "capex": 50000000,
+                "jobs": 180,
+                "facility_type": "semiconductor supplier",
+            },
+            "analysis_report": {
+                "summary": "Ohio semiconductor supplier expansion has several first-pass incentive paths.",
+                "recommended_programs": [
+                    {
+                        "name": "Ohio Job Creation Tax Credit",
+                        "jurisdiction": "Ohio",
+                        "source_url": "https://development.ohio.gov/business/state-incentives/job-creation-tax-credit",
+                    }
+                ],
+                "eligibility_checks": [{"program_id": "oh-jctc", "status": "UNKNOWN"}],
+                "system_prompt": "internal prompt must not leave backend",
+                "embedding_history": [0.1, 0.2],
+            },
+            "llm_metadata": {"provider": "internal"},
+            "vector_matches": [{"id": "internal-vector-match"}],
+            "access_token": "private-token",
+        }
+        repository.put_partner(
+            partner_portal_service.Partner(
+                partner_id="oh-cpa",
+                firm_name="Ohio Incentive Review LLP",
+                assigned_cpa_name="Jordan Lee",
+                cpa_license_number="OH-CPA-12345",
+                state_jurisdictions=["OH"],
+                contracted_rev_share_percentage=partner_portal_service.Decimal("30"),
+            )
+        )
+        repository.put_partner(
+            partner_portal_service.Partner(
+                partner_id="mi-cpa",
+                firm_name="Michigan Review LLP",
+                assigned_cpa_name="Taylor Morgan",
+                cpa_license_number="MI-CPA-12345",
+                state_jurisdictions=["MI"],
+                contracted_rev_share_percentage=partner_portal_service.Decimal("25"),
+            )
+        )
+        repository.put_partner(
+            partner_portal_service.Partner(
+                partner_id="federal-cpa",
+                firm_name="Federal Incentive Review LLP",
+                assigned_cpa_name="Avery Patel",
+                cpa_license_number="US-CPA-12345",
+                state_jurisdictions=["FEDERAL"],
+                contracted_rev_share_percentage=partner_portal_service.Decimal("35"),
+            )
+        )
+        return repository
+
+    def test_assign_project_requires_matching_state_or_federal_oversight(self) -> None:
+        repository = self.build_repository()
+        service = partner_portal_service.PartnerPortalService(repository)
+
+        with self.assertRaises(partner_portal_service.PartnerRoutingEligibilityError):
+            service.assign_project_to_partner("project-oh", "mi-cpa")
+
+        routing = service.assign_project_to_partner("project-oh", "oh-cpa")
+
+        self.assertEqual(routing.routing_status, partner_portal_service.RoutingStatus.PENDING_PARTNER_ACCEPTANCE)
+        self.assertEqual(repository.projects["project-oh"]["status"], "PENDING_PARTNER_ACCEPTANCE")
+        self.assertEqual(repository.audit_entries[-1].event_type, "PROJECT_ROUTED_TO_PARTNER")
+
+    def test_federal_oversight_partner_can_review_ohio_project(self) -> None:
+        repository = self.build_repository()
+        service = partner_portal_service.PartnerPortalService(repository)
+
+        routing = service.assign_project_to_partner("project-oh", "federal-cpa")
+
+        self.assertEqual(routing.assigned_partner_id, "federal-cpa")
+
+    def test_secure_review_payload_excludes_internal_ai_material(self) -> None:
+        repository = self.build_repository()
+        service = partner_portal_service.PartnerPortalService(repository)
+        service.assign_project_to_partner("project-oh", "oh-cpa")
+
+        payload = service.generate_secure_review_payload("project-oh")
+        encoded_payload = json.dumps(payload)
+
+        self.assertTrue(payload["read_only"])
+        self.assertEqual(payload["review_document"]["estimated_page_count"], 50)
+        self.assertIn("source_citations", payload)
+        self.assertNotIn("system_prompt", encoded_payload)
+        self.assertNotIn("embedding_history", encoded_payload)
+        self.assertNotIn("vector_matches", encoded_payload)
+        self.assertNotIn("access_token", encoded_payload)
+        self.assertNotIn("llm_metadata", encoded_payload)
+
+    def test_cpa_approval_moves_project_to_audit_ready_and_logs_entry(self) -> None:
+        repository = self.build_repository()
+        service = partner_portal_service.PartnerPortalService(repository)
+        service.assign_project_to_partner("project-oh", "oh-cpa")
+
+        routing = service.submit_cpa_review_action("project-oh", "APPROVE", "Reviewed and signed off.")
+
+        self.assertEqual(routing.routing_status, partner_portal_service.RoutingStatus.PARTNER_SIGNED_OFF)
+        self.assertEqual(repository.projects["project-oh"]["status"], "AUDIT_READY")
+        self.assertEqual(repository.audit_entries[-1].event_type, "PARTNER_SIGNED_OFF")
+        self.assertTrue(repository.audit_entries[-1].to_item()["immutable"])
+
+    def test_request_changes_requires_notes(self) -> None:
+        repository = self.build_repository()
+        service = partner_portal_service.PartnerPortalService(repository)
+        service.assign_project_to_partner("project-oh", "oh-cpa")
+
+        with self.assertRaises(partner_portal_service.PartnerPortalValidationError):
+            service.submit_cpa_review_action("project-oh", "REQUEST_CHANGES", "")
+
+    def test_payout_ledger_uses_subcontracted_professional_service_fee_label(self) -> None:
+        repository = self.build_repository()
+        service = partner_portal_service.PartnerPortalService(repository)
+        service.assign_project_to_partner("project-oh", "oh-cpa")
+
+        ledger = service.record_payout_ledger("project-oh", "100000.00", ledger_id="ledger-1")
+
+        self.assertEqual(ledger.partner_fee_type, "SubcontractedProfessionalServiceFees")
+        self.assertEqual(ledger.partner_share, partner_portal_service.Decimal("30000.00"))
+        self.assertEqual(ledger.platform_share, partner_portal_service.Decimal("70000.00"))
+        self.assertEqual(repository.payout_ledgers[0].ledger_id, "ledger-1")
 
 
 if __name__ == "__main__":

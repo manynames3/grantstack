@@ -5,15 +5,15 @@ const statusElement = document.querySelector("#form-status");
 const fillSampleButton = document.querySelector("#fill-sample");
 
 const SAMPLE_PROJECT = {
-  location: "Raleigh, NC",
-  facility_type: "Advanced manufacturing",
-  capex: "12500000",
-  jobs: "82",
-  contact_email: "buyer@example.com",
-  company_name: "Acme Manufacturing",
-  average_wage: "72000",
-  project_timeline: "Site decision in 90 days",
-  competing_locations: "SC, TN, Mexico",
+  location: "Columbus, OH",
+  facility_type: "Semiconductor supplier",
+  capex: "420000000",
+  jobs: "180",
+  contact_email: "tax@company.com",
+  company_name: "Northstar Components",
+  average_wage: "92000",
+  project_timeline: "Construction start before December 31, 2026",
+  competing_locations: "IN, KY, Germany",
 };
 
 fillSampleButton?.addEventListener("click", () => {
@@ -30,14 +30,14 @@ fillSampleButton?.addEventListener("click", () => {
   }
 
   statusElement.className = "form-status";
-  statusElement.textContent = "Sample inputs loaded. Submit to generate a first-pass screen.";
+  statusElement.textContent = "Sample inputs loaded. Submit to request paid pilot terms.";
   trackEvent("sample_inputs_loaded");
 });
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   statusElement.className = "form-status";
-  statusElement.textContent = "Generating first-pass screen...";
+  statusElement.textContent = "Requesting paid pilot terms...";
   trackEvent("form_submit_attempt");
 
   const formData = new FormData(form);
@@ -76,7 +76,7 @@ form.addEventListener("submit", async (event) => {
     }
 
     statusElement.className = "form-status success";
-    statusElement.textContent = "Accepted. Opening your private report page...";
+    statusElement.textContent = "Accepted. Opening your private pilot packet...";
     trackEvent("form_submit_success", { project_id: responseBody.project_id });
     form.reset();
     const reportUrl = `report.html?project_id=${encodeURIComponent(responseBody.project_id)}&token=${encodeURIComponent(
