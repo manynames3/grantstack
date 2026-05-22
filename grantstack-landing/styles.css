@@ -3760,14 +3760,24 @@ html:has(body.landing-positivus) {
 }
 
 .landing-positivus .make-happen-card {
-  display: grid;
-  grid-template-columns: minmax(0, 0.72fr) minmax(240px, 0.28fr);
-  gap: 36px;
-  align-items: center;
+  position: relative;
+  isolation: isolate;
+  min-height: 430px;
+  display: flex;
+  align-items: flex-end;
   margin-top: 76px;
-  padding: 48px 56px;
+  overflow: hidden;
+  border: 1.5px solid var(--pos-line);
   border-radius: 42px;
-  background: var(--pos-card);
+  padding: 56px;
+  background:
+    linear-gradient(90deg, rgba(255, 254, 248, 0.96) 0%, rgba(255, 254, 248, 0.88) 42%, rgba(255, 254, 248, 0.18) 74%),
+    url("assets/hero-industrial-floor.jpg") center / cover;
+  box-shadow: 0 6px 0 var(--pos-ink);
+}
+
+.landing-positivus .make-happen-card > div {
+  max-width: 650px;
 }
 
 .landing-positivus .make-happen-card h3 {
@@ -3782,53 +3792,6 @@ html:has(body.landing-positivus) {
   color: var(--pos-soft);
   font-size: 1.03rem;
   line-height: 1.62;
-}
-
-.landing-positivus .proposal-art {
-  position: relative;
-  min-height: 220px;
-}
-
-.landing-positivus .proposal-art span {
-  position: absolute;
-  display: block;
-  border: 2px solid var(--pos-ink);
-  background: var(--pos-lime);
-}
-
-.landing-positivus .proposal-art span:nth-child(1) {
-  inset: 38px 46px auto auto;
-  width: 150px;
-  height: 92px;
-  border-radius: 30px;
-  transform: rotate(-8deg);
-}
-
-.landing-positivus .proposal-art span:nth-child(2) {
-  right: 10px;
-  bottom: 20px;
-  width: 118px;
-  height: 118px;
-  border-radius: 50%;
-  background: var(--pos-white);
-}
-
-.landing-positivus .proposal-art span:nth-child(3) {
-  left: 26px;
-  top: 24px;
-  width: 74px;
-  height: 74px;
-  border-radius: 22px;
-  background: var(--pos-ink);
-}
-
-.landing-positivus .proposal-art span:nth-child(4) {
-  left: 76px;
-  bottom: 28px;
-  width: 112px;
-  height: 36px;
-  border-radius: 999px;
-  background: var(--pos-lime);
 }
 
 .landing-positivus .pas-grid p,
@@ -4396,8 +4359,11 @@ html:has(body.landing-positivus) {
     padding: 28px;
   }
 
-  .landing-positivus .proposal-art {
-    display: none;
+  .landing-positivus .make-happen-card {
+    min-height: 460px;
+    background:
+      linear-gradient(180deg, rgba(255, 254, 248, 0.96) 0%, rgba(255, 254, 248, 0.88) 48%, rgba(255, 254, 248, 0.22) 100%),
+      url("assets/hero-industrial-floor.jpg") center / cover;
   }
 
   .landing-positivus .score-row,
