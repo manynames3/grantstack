@@ -11,17 +11,17 @@
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="landing-positivus">
     <header class="site-header" aria-label="Primary navigation">
       <a class="brand" href="#top" aria-label="GrantStack home">
         <span>GrantStack</span>
       </a>
       <nav class="nav-links" aria-label="Main menu">
-        <a href="#problem">Problem</a>
-        <a href="#output">Sample</a>
-        <a href="#coverage">Sources</a>
-        <a href="#cost">ROI</a>
-        <a href="#review">Review</a>
+        <a href="#problem">Services</a>
+        <a href="#output">Use cases</a>
+        <a href="#coverage">Coverage</a>
+        <a href="#cost">Pricing</a>
+        <a href="#review">Process</a>
         <a href="#faq">FAQ</a>
         <a href="#intake">Pilot</a>
       </nav>
@@ -32,10 +32,11 @@
       <section class="hero" aria-labelledby="hero-title">
         <div class="section-inner hero-grid">
           <div class="hero-copy-block">
-            <p class="eyebrow">For CFOs and tax directors evaluating $100M+ facilities</p>
+            <p class="eyebrow">For CFOs and tax directors</p>
             <h1 id="hero-title">
               <span>Stop Leaving</span>
-              <span>Expansion Money</span>
+              <span>Expansion</span>
+              <span>Money</span>
               <span>Unclaimed.</span>
             </h1>
             <p class="hero-copy">
@@ -57,51 +58,79 @@
             </p>
           </div>
 
-          <aside class="hero-product" aria-label="GrantStack expert-certified workflow preview">
-            <div class="product-topline">
-              <span>Pilot diligence packet</span>
-              <strong>Screening only</strong>
-            </div>
-            <div class="product-input">
-              <p>Capital project</p>
-              <dl>
-                <div><dt>Location</dt><dd>Columbus, OH</dd></div>
-                <div><dt>Capex</dt><dd>$420M</dd></div>
-                <div><dt>Facility</dt><dd>Semiconductor supplier</dd></div>
-                <div><dt>Audience</dt><dd>CFO + Tax</dd></div>
-              </dl>
-            </div>
-            <div class="pipeline-row">
-              <span>Source screen</span>
-              <span>ROI scenario</span>
-              <span>Expert review path</span>
-            </div>
-            <div class="product-output">
-              <div>
-                <span>Potential stack</span>
-                <strong>CHIPS + IRA + state</strong>
+          <aside id="intake" class="hero-intake" aria-label="Request paid pilot terms">
+            <form class="intake-form hero-intake-form" id="project-form">
+              <div class="form-heading">
+                <div>
+                  <span>$15k fixed-fee pilot</span>
+                  <strong>Request terms for one serious capital project.</strong>
+                </div>
+                <button
+                  class="button button-secondary form-sample-button"
+                  type="button"
+                  id="fill-sample"
+                  data-analytics-event="sample_inputs_click"
+                  data-analytics-label="fill_sample_inputs"
+                >
+                  Use sample
+                </button>
               </div>
-              <div>
-                <span>Review status</span>
-                <strong>Advisor validation required</strong>
+              <p class="form-intro">
+                Share the minimum facts needed to confirm fit. We review source coverage, confidentiality needs, and
+                expert-review path before asking for payment.
+              </p>
+              <div class="field-grid compact-field-grid">
+                <label>
+                  <span>Geographic location</span>
+                  <input name="location" autocomplete="address-level2" required placeholder="Columbus, OH" />
+                </label>
+                <label>
+                  <span>Facility type</span>
+                  <input name="facility_type" required placeholder="Semiconductor fab" />
+                </label>
+                <label>
+                  <span>Project capex</span>
+                  <input name="capex" type="number" min="1" step="1" required placeholder="420000000" />
+                </label>
+                <label>
+                  <span>Planned new jobs</span>
+                  <input name="jobs" type="number" min="0" step="1" required placeholder="180" />
+                </label>
+                <label class="full-field">
+                  <span>Corporate email</span>
+                  <input name="contact_email" type="email" autocomplete="email" required placeholder="tax@company.com" />
+                </label>
+                <label class="ack-field full-field">
+                  <input name="screening_acknowledgement" type="checkbox" required />
+                  <span>
+                    I understand this is screening only. Advisory use requires qualified review, source validation, and
+                    agency confirmation.
+                  </span>
+                </label>
               </div>
-            </div>
+              <button class="button button-primary submit-button" type="submit">Request paid pilot terms</button>
+              <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+              <p class="sample-path hero-sample-path">
+                Want to inspect the output first?
+                <a href="report.html?sample=true" data-analytics-event="cta_click" data-analytics-label="hero_form_sample_report">Open the sample report</a>.
+              </p>
+            </form>
           </aside>
         </div>
 
         <div class="section-inner proof-rail" aria-label="Product proof points">
-          <span>CHIPS 48D construction deadline: Dec. 31, 2026</span>
-          <span>Sample packet available before email</span>
-          <span>$15k fixed-fee paid pilot</span>
-          <span>Expert review required before reliance</span>
+          <span>CHIPS 48D deadline</span>
+          <span>Sample packet available</span>
+          <span>$15k paid pilot</span>
+          <span>Expert review required</span>
         </div>
       </section>
 
       <section id="problem" class="pas-section">
         <div class="section-inner">
           <div class="pas-heading">
-            <p class="section-label">The business problem</p>
-            <h2>Capital projects qualify for incentives teams discover too late.</h2>
+            <p class="section-label">Services</p>
+            <h2>Everything your pilot screens before advisory spend.</h2>
             <p>
               Federal credits, state grants, local abatements, workforce funds, utility support, and infrastructure
               programs are evaluated in separate silos. That fragmentation makes it easy to miss value or carry weak
@@ -110,146 +139,84 @@
           </div>
           <div class="pas-grid" aria-label="Problem agitation solution">
             <article>
-              <span>Problem</span>
-              <h3>Incentive discovery is scattered across agencies and advisors.</h3>
-              <p>CFOs and tax teams rarely get one clean view of the stacked federal, state, and local opportunity before site decisions harden.</p>
+              <div>
+                <span>Federal credits</span>
+                <h3>CHIPS and IRA screen</h3>
+                <p>Construction timing, qualified property, facility activity, registration, and controlled-entity questions surfaced early.</p>
+                <a class="learn-link" href="#coverage">Learn more</a>
+              </div>
+              <div class="service-art service-art-federal" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </div>
             </article>
             <article>
-              <span>Cost</span>
-              <h3>One missed credit can change project economics.</h3>
-              <p>On large facilities, an overlooked tax credit, abatement, workforce program, or infrastructure path can mean millions left out of the model.</p>
+              <div>
+                <span>State programs</span>
+                <h3>Incentive stack mapping</h3>
+                <p>Economic-development grants, tax credits, site-readiness, workforce, and utility programs compared against your project facts.</p>
+                <a class="learn-link" href="#coverage">Learn more</a>
+              </div>
+              <div class="service-art service-art-stack" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </div>
             </article>
             <article>
-              <span>Fix</span>
-              <h3>Generate the packet, then route it for expert sign-off.</h3>
-              <p>GrantStack creates a source-backed assessment packet and separates AI generation from qualified human review before reliance.</p>
+              <div>
+                <span>Local economics</span>
+                <h3>Abatement and utility scan</h3>
+                <p>Local tax abatements, enterprise zones, training support, infrastructure constraints, and approval dependencies called out.</p>
+                <a class="learn-link" href="#coverage">Learn more</a>
+              </div>
+              <div class="service-art service-art-local" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </div>
+            </article>
+            <article>
+              <div>
+                <span>Compliance</span>
+                <h3>Risk and clawback review</h3>
+                <p>Timing, reporting, job-count, wage, FEOC, ownership, and post-award obligations separated from simple program discovery.</p>
+                <a class="learn-link" href="#review">Learn more</a>
+              </div>
+              <div class="service-art service-art-risk" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </div>
+            </article>
+            <article>
+              <div>
+                <span>Board packet</span>
+                <h3>Evidence memo generation</h3>
+                <p>A cited diligence packet turns source findings, assumptions, missing facts, and ROI scenarios into a review-ready memo.</p>
+                <a class="learn-link" href="#output">Learn more</a>
+              </div>
+              <div class="service-art service-art-memo" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </div>
+            </article>
+            <article>
+              <div>
+                <span>Expert handoff</span>
+                <h3>Reviewer workflow</h3>
+                <p>GrantStack keeps automated screening separate from qualified tax, legal, grants, or agency validation before reliance.</p>
+                <a class="learn-link" href="#review">Learn more</a>
+              </div>
+              <div class="service-art service-art-review" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </div>
             </article>
           </div>
-        </div>
-      </section>
-
-      <section id="comparison" class="metric-section">
-        <div class="section-inner metric-layout">
-          <div class="section-copy">
-            <p class="section-label">Traditional advisory vs. GrantStack</p>
-            <h2>Replace weeks of incentive discovery with a certified review workflow.</h2>
-            <p>
-              Traditional consulting still matters for final advisory judgment. GrantStack changes the front end of the
-              process: source-backed generation first, then human expert certification before anything becomes submission-ready.
-            </p>
-          </div>
-          <div class="metric-grid" aria-label="GrantStack versus traditional consulting">
-            <article class="metric-card metric-card-muted">
-              <span>Traditional consulting</span>
-              <strong>$300k+ modeled engagement*</strong>
-              <p>Large-firm teams can require weeks of discovery before the CFO sees a complete incentive stack.</p>
-              <ul>
-                <li>Manual source review across jurisdictions</li>
-                <li>Partner-heavy meetings before the project clears fit</li>
-                <li>High advisory spend before an internal go/no-go</li>
-              </ul>
-            </article>
-            <article class="metric-card metric-card-featured">
-              <span>GrantStack</span>
-              <strong>30-minute draft + paid pilot packet</strong>
-              <p>Generate the first review packet quickly, then decide whether expert review is worth funding.</p>
-              <ul>
-                <li>Federal, state, local, workforce, utility, and infrastructure paths</li>
-                <li>Advisor-safe handoff packet with assumptions, citations, and review status</li>
-                <li>Clear separation between automated screening and qualified professional reliance</li>
-              </ul>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="compliance" class="compliance-section">
-        <div class="section-inner compliance-layout">
-          <div class="section-copy">
-            <p class="section-label">Review workflow</p>
-            <h2>Automation handles discovery. Certified experts handle reliance.</h2>
-            <p>
-              AI prepares the exhaustive packet, then certified professionals review the claim path before the client
-              relies on it.
-            </p>
-          </div>
-          <div class="compliance-cards" aria-label="Review workflow features">
-            <article tabindex="0">
-              <span>01</span>
-              <h3>Find overlapping incentives</h3>
-              <p>Calculates how CHIPS, IRA, state credits, property tax abatements, workforce funding, and site-readiness programs can overlap or conflict.</p>
-            </article>
-            <article tabindex="0">
-              <span>02</span>
-              <h3>Flag compliance risk early</h3>
-              <p>Flags ownership, supply-chain, jurisdiction, and controlled-entity questions for expert review before a semiconductor incentive claim advances.</p>
-            </article>
-            <article tabindex="0">
-              <span>03</span>
-              <h3>Route for expert sign-off</h3>
-              <p>Enterprise packets are routed to qualified CPA, tax, legal, or economic-development reviewers before they are marked audit-ready.</p>
-            </article>
-          </div>
-          <p class="compliance-note">
-            GrantStack does not guarantee audit outcomes. Client responsibility remains. The workflow creates a cleaner
-            review packet, preserves evidence, and separates AI generation from certified human sign-off.
-          </p>
-        </div>
-      </section>
-
-      <section id="benefits" class="benefits-section">
-        <div class="section-inner benefits-layout">
-          <div class="section-copy">
-            <p class="section-label">What changes for finance</p>
-            <h2>Give finance a clearer incentive case before decisions lock.</h2>
-            <p>
-              GrantStack is built for the moment before a high-stakes capital project becomes expensive to reverse:
-              enough structure for executive review, enough caution for expert validation.
-            </p>
-          </div>
-          <div class="benefit-list" aria-label="GrantStack benefits">
-            <article>
-              <span>01</span>
-              <h3>Find more incentive paths earlier</h3>
-              <p>Screen CHIPS, IRA, state, local, workforce, infrastructure, utility, and property-tax layers from the same project facts.</p>
-            </article>
-            <article>
-              <span>02</span>
-              <h3>Reduce wasted advisory spend</h3>
-              <p>Clarify fit, missing data, and jurisdiction questions before a large consulting sprint starts billing against a vague scope.</p>
-            </article>
-            <article>
-              <span>03</span>
-              <h3>Preserve review discipline</h3>
-              <p>Keep citations, assumptions, partner notes, requested changes, and sign-off status tied to the assessment workflow.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="trust-section">
-        <div class="section-inner trust-layout">
-          <div>
-            <p class="section-label">Trust signals</p>
-            <h2>Built for serious diligence, not AI-only filing.</h2>
-          </div>
-          <div class="trust-grid" aria-label="GrantStack trust signals">
-            <article>
-              <strong>Built for capital-intensive projects</strong>
-              <span>Semiconductor suppliers, data centers, advanced manufacturing, energy infrastructure, and corporate tax teams.</span>
-            </article>
-            <article>
-              <strong>Certified review workflow supported</strong>
-              <span>Projects can be routed to qualified CPA, tax, legal, grants, or economic-development reviewers before reliance.</span>
-            </article>
-            <article>
-              <strong>Evidence-first output</strong>
-              <span>Assessment packets keep citations, assumptions, eligibility gaps, and review status visible to finance stakeholders.</span>
-            </article>
-            <article>
-              <strong>Sample packet before submission</strong>
-              <span>Buyers can inspect the report structure, citations, risk flags, and advisory disclaimers before sharing project facts.</span>
-            </article>
+          <div class="make-happen-card">
+            <div>
+              <h3>Screen one capital project before you authorize a larger advisory sprint.</h3>
+              <p>
+                Send rough location, capex, jobs, facility type, and timeline. GrantStack returns the source-backed first
+                pass your finance, tax, and outside-advisor teams can challenge.
+              </p>
+              <a class="button button-primary" href="#intake" data-analytics-event="cta_click" data-analytics-label="services_make_happen">Request pilot terms</a>
+            </div>
+            <div class="proposal-art" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
           </div>
         </div>
       </section>
@@ -258,7 +225,7 @@
         <div class="section-inner coverage-layout">
           <div class="section-copy">
             <p class="section-label">Specific source coverage</p>
-            <h2>The screen starts with sources your advisors can inspect.</h2>
+            <h2>Source coverage your advisors can inspect.</h2>
             <p>
               GrantStack does not ask a chatbot for a broad list of grants. The pilot maps project facts against a
               maintained source catalog, then exposes citations, open questions, and unsupported assumptions.
@@ -294,45 +261,38 @@
         </div>
       </section>
 
-      <section class="lifespan-section">
-        <div class="section-inner lifespan-layout">
-          <div class="section-copy">
-            <p class="section-label">Beyond the deadline</p>
-            <h2>CHIPS is the clock. Industrial policy is the long-term workflow.</h2>
-            <p>
-              The 2026 deadline creates urgency, but incentive work does not end there. Expansion teams still have to
-              compare state and local abatements, global semiconductor and clean-industry programs, and post-award
-              compliance obligations that can last for years.
-            </p>
-          </div>
-          <div class="lifespan-grid" aria-label="Long-term incentive workflow">
-            <article>
-              <span>Global programs</span>
-              <h3>EU Chips Act, clean-industry, and regional incentives</h3>
-              <p>Industrial-policy programs are expanding across the U.S., Europe, and state-level jurisdictions.</p>
-            </article>
-            <article>
-              <span>Local economics</span>
-              <h3>Property tax, workforce, utility, and infrastructure layers</h3>
-              <p>Local abatements and negotiated support can change the economics of otherwise similar sites.</p>
-            </article>
-            <article>
-              <span>Post-award risk</span>
-              <h3>Compliance tracking and clawback prevention</h3>
-              <p>Job creation, investment, wage, reporting, and timing commitments need monitoring after awards close.</p>
-            </article>
-          </div>
-          <p class="lifespan-source-note">
-            Public incentive agreements commonly include performance monitoring and clawback rights when job or
-            investment commitments are not met. Sources:
-            <a href="https://digital-strategy.ec.europa.eu/en/policies/european-chips-act" rel="noopener">European Chips Act</a>,
-            <a href="https://single-market-economy.ec.europa.eu/industry/sustainability/net-zero-industry-act_en" rel="noopener">EU Net-Zero Industry Act</a>,
-            <a href="https://journals.sagepub.com/doi/10.1177/2053168017713646" rel="noopener">incentive clawback research</a>.
+      <section id="output" class="output-section">
+        <div class="section-inner case-heading">
+          <p class="section-label">Use cases</p>
+          <h2>Where a first screen changes the next executive decision.</h2>
+          <p>
+            GrantStack is built for the messy early window before a company knows whether to escalate to outside
+            advisors, agency conversations, or a formal application track.
           </p>
         </div>
-      </section>
-
-      <section id="output" class="output-section">
+        <div class="section-inner case-study-band" aria-label="GrantStack use cases">
+          <article>
+            <p>
+              A semiconductor supplier is choosing between two Midwest sites and needs to know which incentive stack is
+              credible before the board narrows the location list.
+            </p>
+            <a href="#intake" data-analytics-event="cta_click" data-analytics-label="case_site_selection">Screen a site decision</a>
+          </article>
+          <article>
+            <p>
+              A data-center developer has capex, utility, and local-infrastructure exposure, but the team does not yet
+              know which programs justify formal advisor spend.
+            </p>
+            <a href="#intake" data-analytics-event="cta_click" data-analytics-label="case_data_center">Triage a buildout</a>
+          </article>
+          <article>
+            <p>
+              A tax director needs a source index, missing-fact list, and reliance guardrails before briefing internal
+              stakeholders on CHIPS, IRA, state, and local paths.
+            </p>
+            <a href="report.html?sample=true" data-analytics-event="cta_click" data-analytics-label="case_sample_packet">View sample packet</a>
+          </article>
+        </div>
         <div class="section-inner output-layout">
           <div class="report-preview" aria-label="Sample GrantStack report">
             <div class="preview-header">
@@ -376,7 +336,7 @@
           </div>
           <div class="section-copy">
             <p class="section-label">Believable sample report</p>
-            <h2>A source-backed memo, not a vague program list.</h2>
+            <h2>A case-study packet, not a vague program list.</h2>
             <p>
               The report is designed for the first executive conversation: what looks promising, what could break
               eligibility, what facts are missing, which sources were checked, and what needs expert validation before
@@ -401,7 +361,7 @@
         <div class="section-inner">
           <div class="cost-heading">
             <p class="section-label">Cost comparison</p>
-            <h2>The first screen should not require a six-figure advisory commitment.</h2>
+            <h2>Pricing starts with a fixed screen, not a blank-check sprint.</h2>
             <p>
               Consulting firms are valuable when a project is ready for formal review, negotiation, applications, and
               compliance. GrantStack is for the earlier question: is this expansion worth taking to that level yet?
@@ -542,33 +502,6 @@
         </div>
       </section>
 
-      <section class="differentiator-section">
-        <div class="section-inner differentiator-layout">
-          <div class="section-copy">
-            <p class="section-label">Where it fits</p>
-            <h2>Use GrantStack before the expensive advisory sprint.</h2>
-          </div>
-          <div class="comparison-grid">
-            <article>
-              <h3>Spreadsheets</h3>
-              <p>Useful once you know what to track, but weak for turning rough specs into a sourced first memo.</p>
-            </article>
-            <article>
-              <h3>Asking a chatbot</h3>
-              <p>Helpful for plain-language explanations, but easy to over-trust without citations and review steps.</p>
-            </article>
-            <article>
-              <h3>Consulting firms</h3>
-              <p>Best for final validation and negotiation, but heavy when the project is still changing weekly.</p>
-            </article>
-            <article>
-              <h3>GrantStack</h3>
-              <p>Best for early triage: likely paths, eligibility gaps, and the questions to ask before paid review.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
       <section id="review" class="review-section">
         <div class="section-inner review-layout">
           <div class="section-copy">
@@ -651,92 +584,6 @@
         </div>
       </section>
 
-      <section id="intake" class="intake-section">
-        <div class="section-inner intake-layout">
-          <div class="section-copy">
-            <p class="section-label">Paid pilot request</p>
-            <h2>Request paid pilot terms.</h2>
-            <p>
-              Share the minimum facts needed to route a confidential assessment: project capex, geography, facility
-              type, and corporate contact. We will confirm fit, source coverage, confidentiality needs, and review path
-              before asking for payment.
-            </p>
-            <p class="sample-path">
-              Want to inspect the output before sharing project facts?
-              <a href="report.html?sample=true" data-analytics-event="cta_click" data-analytics-label="intake_sample_report">Open the sample report</a>.
-            </p>
-            <div class="photo-card">
-              <img src="assets/hero-industrial-floor.jpg" alt="Industrial facility interior under construction" />
-              <span>Best fit: expansion projects with meaningful investment, hiring, and a real site decision.</span>
-            </div>
-          </div>
-
-          <form class="intake-form" id="project-form">
-            <div class="form-heading">
-              <div>
-                <span>$15k fixed-fee pilot</span>
-                <strong>For CFO, tax, and capital-project teams evaluating one serious facility</strong>
-              </div>
-              <button
-                class="button button-secondary form-sample-button"
-                type="button"
-                id="fill-sample"
-                data-analytics-event="sample_inputs_click"
-                data-analytics-label="fill_sample_inputs"
-              >
-                Use sample inputs
-              </button>
-            </div>
-            <div class="field-grid">
-              <label>
-                <span>Geographic location</span>
-                <input name="location" autocomplete="address-level2" required placeholder="Columbus, OH" />
-              </label>
-              <label>
-                <span>Facility type</span>
-                <input name="facility_type" required placeholder="Semiconductor fab or data center" />
-              </label>
-              <label>
-                <span>Project capex</span>
-                <input name="capex" type="number" min="1" step="1" required placeholder="420000000" />
-              </label>
-              <label>
-                <span>Planned new jobs</span>
-                <input name="jobs" type="number" min="0" step="1" required placeholder="180" />
-              </label>
-              <label class="full-field">
-                <span>Corporate email</span>
-                <input name="contact_email" type="email" autocomplete="email" required placeholder="tax@company.com" />
-              </label>
-              <label>
-                <span>Company</span>
-                <input name="company_name" autocomplete="organization" placeholder="Acme Manufacturing" />
-              </label>
-              <label>
-                <span>Average wage</span>
-                <input name="average_wage" type="number" min="1" step="1" placeholder="68000" />
-              </label>
-              <label>
-                <span>Decision timeline</span>
-                <input name="project_timeline" placeholder="Site decision in 90 days" />
-              </label>
-              <label>
-                <span>Competing locations</span>
-                <input name="competing_locations" placeholder="SC, TN, Mexico" />
-              </label>
-              <label class="ack-field full-field">
-                <input name="screening_acknowledgement" type="checkbox" required />
-                <span>
-                  I understand this is a first-pass screening memo. Paid advisory use requires qualified review, source
-                  validation, and agency confirmation before relying on any incentive strategy.
-                </span>
-              </label>
-            </div>
-            <button class="button button-primary submit-button" type="submit">Request paid pilot terms</button>
-            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
-          </form>
-        </div>
-      </section>
     </main>
 
     <footer class="footer">
