@@ -44,7 +44,7 @@ form.addEventListener("submit", async (event) => {
     statusElement.className = "form-status success";
     statusElement.textContent = "Accepted. Opening your private report page...";
     form.reset();
-    const reportUrl = `/report.html?project_id=${encodeURIComponent(responseBody.project_id)}&token=${encodeURIComponent(
+    const reportUrl = `report.html?project_id=${encodeURIComponent(responseBody.project_id)}&token=${encodeURIComponent(
       responseBody.access_token,
     )}`;
     window.location.assign(reportUrl);

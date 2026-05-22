@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="GrantStack helps expansion teams turn facility specs into structured grant and incentive strategy in minutes."
+      content="GrantStack helps manufacturers and expansion teams turn facility specs into cited public funding and incentive strategy."
     />
-    <title>GrantStack | Incentive Strategy for Expansion Teams</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="/assets/hero-industrial-floor.jpg" as="image" />
-    <link rel="stylesheet" href="/styles.css" />
+    <title>GrantStack | AI Grant Intelligence for Expansion Teams</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="site-header" aria-label="Primary navigation">
@@ -19,177 +18,231 @@
         <span>GrantStack</span>
       </a>
       <nav class="nav-links" aria-label="Main menu">
+        <a href="#problem">Problem</a>
+        <a href="#output">Output</a>
         <a href="#workflow">Workflow</a>
-        <a href="#proof">Proof</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#intake">Analyze</a>
+        <a href="#intake">Live intake</a>
       </nav>
-      <a class="nav-action" href="#intake">Start project</a>
+      <a class="nav-action" href="#intake">Run a screen</a>
     </header>
 
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-          <p class="eyebrow">AI grant intelligence for facility expansion</p>
-          <h1 id="hero-title">GrantStack</h1>
-          <p class="hero-copy">
-            Find public funding angles for capex-heavy projects before your team spends weeks chasing the wrong
-            programs.
-          </p>
-          <div class="hero-actions" aria-label="Primary actions">
-            <a class="button button-primary" href="#intake">Analyze a project</a>
-            <a class="button button-secondary" href="#workflow">See the system</a>
+        <div class="section-inner hero-grid">
+          <div class="hero-copy-block">
+            <p class="eyebrow">Live serverless grant-intelligence demo</p>
+            <h1 id="hero-title">Turn expansion specs into a cited incentive screen.</h1>
+            <p class="hero-copy">
+              GrantStack helps manufacturers, logistics operators, and capital-intensive teams decide whether public
+              funding is worth deeper diligence before a site decision hardens.
+            </p>
+            <div class="hero-actions" aria-label="Primary actions">
+              <a class="button button-primary" href="#intake">Analyze a project</a>
+              <a class="button button-secondary" href="#output">View report output</a>
+            </div>
+            <p class="hero-note">This demo submits to a real AWS API and opens a private tokenized report page.</p>
           </div>
+
+          <aside class="hero-product" aria-label="GrantStack live workflow preview">
+            <div class="product-topline">
+              <span>grantstack.run</span>
+              <strong>live</strong>
+            </div>
+            <div class="product-input">
+              <p>Project intake</p>
+              <dl>
+                <div><dt>Location</dt><dd>Raleigh, NC</dd></div>
+                <div><dt>Capex</dt><dd>$12.5M</dd></div>
+                <div><dt>Jobs</dt><dd>82</dd></div>
+                <div><dt>Facility</dt><dd>Advanced manufacturing</dd></div>
+              </dl>
+            </div>
+            <div class="pipeline-row">
+              <span>API accepted</span>
+              <span>SQS queued</span>
+              <span>Report ready</span>
+            </div>
+            <div class="product-output">
+              <div>
+                <span>Eligibility</span>
+                <strong>82</strong>
+              </div>
+              <div>
+                <span>Evidence</span>
+                <strong>3 cited matches</strong>
+              </div>
+            </div>
+          </aside>
         </div>
-        <div class="hero-metrics" aria-label="GrantStack capabilities">
-          <div>
-            <strong>10 min</strong>
-            <span>project intake</span>
+
+        <div class="section-inner proof-rail" aria-label="Product proof points">
+          <span>Cloudflare Pages frontend</span>
+          <span>AWS Lambda + SQS worker</span>
+          <span>DynamoDB On-Demand reports</span>
+          <span>Terraform-managed infrastructure</span>
+        </div>
+      </section>
+
+      <section id="problem" class="problem-section">
+        <div class="section-inner problem-layout">
+          <div class="section-copy">
+            <p class="section-label">The painful workflow</p>
+            <h2>Incentive diligence starts while the project is still incomplete.</h2>
+            <p>
+              Expansion teams need a first-pass answer before every detail is final. The usual path is slow: gather
+              scattered facts, search program pages, ask advisors basic fit questions, and hope no obvious incentive
+              category was missed.
+            </p>
           </div>
-          <div>
-            <strong>3 layers</strong>
-            <span>fit, risks, next steps</span>
-          </div>
-          <div>
-            <strong>1 memo</strong>
-            <span>for buyer conversations</span>
+          <div class="pain-table" aria-label="Expansion diligence pain points">
+            <article>
+              <span>01</span>
+              <div>
+                <h3>Program fit is fragmented</h3>
+                <p>Eligibility depends on location, jobs, wages, capex, timing, industry, and local discretion.</p>
+              </div>
+            </article>
+            <article>
+              <span>02</span>
+              <div>
+                <h3>Generic AI is not a workflow</h3>
+                <p>Prompts do not provide private report links, status tracking, retries, source refresh, or an audit trail.</p>
+              </div>
+            </article>
+            <article>
+              <span>03</span>
+              <div>
+                <h3>Manual review is expensive too early</h3>
+                <p>Specialists are still needed, but not every rough expansion idea deserves a full advisory sprint.</p>
+              </div>
+            </article>
           </div>
         </div>
       </section>
 
-      <section class="positioning">
-        <div class="section-inner positioning-grid">
-          <div>
-            <p class="section-label">Built for high-stakes expansion</p>
-            <h2>Turn a site plan into a defensible incentive strategy.</h2>
+      <section id="output" class="output-section">
+        <div class="section-inner output-layout">
+          <div class="report-preview" aria-label="Sample GrantStack report">
+            <div class="preview-header">
+              <span>Private project screen</span>
+              <strong>COMPLETED</strong>
+            </div>
+            <div class="score-row">
+              <div>
+                <span>Eligibility score</span>
+                <strong>82</strong>
+              </div>
+              <p>Advanced manufacturing expansion · Raleigh, NC · $12.5M capex · 82 net-new jobs</p>
+            </div>
+            <div class="recommendation-list">
+              <article>
+                <span>High fit</span>
+                <h3>Workforce training support</h3>
+                <p>Job creation and facility type align with common state workforce program categories.</p>
+              </article>
+              <article>
+                <span>Medium fit</span>
+                <h3>Economic development incentive</h3>
+                <p>Capex and employment profile justify agency outreach after wage and county-tier validation.</p>
+              </article>
+              <article>
+                <span>Validate</span>
+                <h3>Infrastructure or site-readiness support</h3>
+                <p>Utility, road, or site constraints can affect whether public partners have a role.</p>
+              </article>
+            </div>
           </div>
-          <p>
-            GrantStack reads the project fundamentals that economic development teams care about: location,
-            capital investment, jobs, facility type, timing, and public benefit. It then prepares a structured
-            analysis your team can use to prioritize programs, shape narratives, and move faster.
-          </p>
+          <div class="section-copy">
+            <p class="section-label">What the buyer receives</p>
+            <h2>A source-backed memo, not a vague program list.</h2>
+            <p>
+              The report is designed for the first buyer conversation: what looks promising, what could break
+              eligibility, what facts are missing, and which official sources need validation.
+            </p>
+            <ul class="check-list">
+              <li>Cited program recommendations with source URLs.</li>
+              <li>Strengths tied to jobs, capex, facility type, and location.</li>
+              <li>Risk flags before teams overstate incentive value.</li>
+              <li>Next diligence questions for finance, site selection, or advisors.</li>
+            </ul>
+          </div>
         </div>
       </section>
 
-      <section id="workflow" class="workflow">
+      <section id="workflow" class="workflow-section">
         <div class="section-inner">
-          <div class="section-heading">
-            <p class="section-label">Workflow</p>
-            <h2>Decoupled intake, fast answers, no idle workers.</h2>
+          <div class="workflow-heading">
+            <p class="section-label">How it runs</p>
+            <h2>Built like an async product, not a one-off AI form.</h2>
           </div>
           <div class="workflow-grid">
-            <article class="workflow-step">
+            <article>
               <span>01</span>
               <h3>Submit specs</h3>
-              <p>Capture location, capex, job creation, and facility type through a clean project intake.</p>
+              <p>Capture location, capex, jobs, facility type, wage, timeline, and competing sites.</p>
             </article>
-            <article class="workflow-step">
+            <article>
               <span>02</span>
-              <h3>Queue analysis</h3>
-              <p>The backend accepts the project instantly and moves deep analysis to an async worker.</p>
+              <h3>Queue work</h3>
+              <p>API Gateway and Lambda return `202 Accepted`, then SQS handles processing asynchronously.</p>
             </article>
-            <article class="workflow-step">
+            <article>
               <span>03</span>
-              <h3>Match context</h3>
-              <p>Relevant incentive knowledge is retrieved from a serverless vector index.</p>
+              <h3>Screen evidence</h3>
+              <p>The worker checks the active source catalog and is provider-ready for LLM/vector retrieval.</p>
             </article>
-            <article class="workflow-step">
+            <article>
               <span>04</span>
-              <h3>Structure the case</h3>
-              <p>The LLM produces a report with fit, risk flags, and next actions saved to DynamoDB.</p>
+              <h3>Render report</h3>
+              <p>DynamoDB stores the status and report behind a private tokenized result link.</p>
             </article>
           </div>
         </div>
       </section>
 
-      <section id="proof" class="product-view">
-        <div class="section-inner product-grid">
-          <div class="product-copy">
-            <p class="section-label">What teams get</p>
-            <h2>A first-pass grant screen that reads like a strategy memo.</h2>
-            <p>
-              GrantStack does not replace counsel or incentive negotiation. It gives operators a sharper first
-              read, so the right experts start from structured context instead of raw notes.
-            </p>
-            <ul class="value-list">
-              <li>Ranked program categories for economic development, workforce, infrastructure, and site readiness.</li>
-              <li>Eligibility strengths tied to jobs, capex, location, and operational commitments.</li>
-              <li>Risk flags that keep teams from over-promising before program rules are validated.</li>
-            </ul>
+      <section class="differentiator-section">
+        <div class="section-inner differentiator-layout">
+          <div class="section-copy">
+            <p class="section-label">Why this exists</p>
+            <h2>The obvious alternatives each miss part of the job.</h2>
           </div>
-
-          <div class="report-panel" aria-label="Sample GrantStack analysis report">
-            <div class="report-topbar">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="report-header">
-              <div>
-                <p>Project screen</p>
-                <h3>Advanced Manufacturing Expansion</h3>
-              </div>
-              <strong>88</strong>
-            </div>
-            <div class="report-row">
-              <span>Location signal</span>
-              <strong>Southeast growth market</strong>
-            </div>
-            <div class="report-row">
-              <span>Capital plan</span>
-              <strong>$24.8M capex</strong>
-            </div>
-            <div class="report-row">
-              <span>Jobs impact</span>
-              <strong>140 net-new roles</strong>
-            </div>
-            <div class="recommendations">
-              <h4>Recommended program stack</h4>
-              <div>Economic development incentive</div>
-              <div>Workforce training grant</div>
-              <div>Infrastructure support</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="pricing" class="pricing-section">
-        <div class="section-inner pricing-grid">
-          <div class="pricing-copy">
-            <p class="section-label">Paid pilot</p>
-            <h2>Start with one expansion screen before committing to a platform.</h2>
-            <p>
-              GrantStack is best for teams with a real facility project, a short diligence window, and a need to
-              decide whether public funding is worth deeper pursuit.
-            </p>
-          </div>
-          <div class="pricing-panel">
-            <p class="pricing-kicker">First paid report</p>
-            <div class="price">$750</div>
-            <p class="pricing-note">AI-assisted first-pass incentive screen with structured fit, risks, and action plan.</p>
-            <ul class="value-list compact">
-              <li>Project intake and structured analysis</li>
-              <li>Downloadable report-ready summary</li>
-              <li>Clear disclaimer for program validation</li>
-            </ul>
-            <a class="button button-primary submit-button" href="#intake">Run a pilot screen</a>
+          <div class="comparison-grid">
+            <article>
+              <h3>Spreadsheets</h3>
+              <p>Good for tracking, weak for turning raw project specs into a cited decision-support memo.</p>
+            </article>
+            <article>
+              <h3>ChatGPT alone</h3>
+              <p>Useful for brainstorming, but not tied to private reports, retries, source refresh, or status flags.</p>
+            </article>
+            <article>
+              <h3>Consulting from day zero</h3>
+              <p>Important for final validation, but often too heavy before a project has cleared basic fit.</p>
+            </article>
           </div>
         </div>
       </section>
 
       <section id="intake" class="intake-section">
-        <div class="section-inner intake-grid">
-          <div class="intake-copy">
+        <div class="section-inner intake-layout">
+          <div class="section-copy">
             <p class="section-label">Live intake</p>
-            <h2>Send a project into the GrantStack backend.</h2>
+            <h2>Run a sample project through the deployed backend.</h2>
             <p>
-              This form submits to the deployed serverless API. You will receive a project ID immediately while
-              the backend processes the analysis asynchronously.
+              Use a real or representative expansion scenario. GrantStack accepts the project immediately, queues the
+              analysis, and opens the private report page when the backend starts processing.
             </p>
+            <div class="photo-card">
+              <img src="assets/hero-industrial-floor.jpg" alt="Industrial facility interior under construction" />
+              <span>Best fit: expansion projects with meaningful capex, hiring, and a real site decision.</span>
+            </div>
           </div>
 
           <form class="intake-form" id="project-form">
+            <div class="form-heading">
+              <span>Project screen</span>
+              <strong>Private report link returned after submission</strong>
+            </div>
             <div class="field-grid">
               <label>
                 <span>Location</span>
@@ -239,12 +292,12 @@
       <div class="section-inner footer-grid">
         <span>GrantStack</span>
         <span>
-          <a href="/privacy.html">Privacy</a>
-          <a href="/terms.html">Terms</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
         </span>
       </div>
     </footer>
 
-    <script src="/app.js" defer></script>
+    <script src="app.js" defer></script>
   </body>
 </html>
