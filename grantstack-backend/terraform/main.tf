@@ -24,6 +24,7 @@ data "aws_caller_identity" "current" {}
 locals {
   name_prefix                = "${var.project_name}-${var.environment}"
   dynamodb_table_name        = coalesce(var.dynamodb_table_name, "${local.name_prefix}-projects")
+  analytics_table_name       = coalesce(var.analytics_table_name, "${local.name_prefix}-analytics")
   source_catalog_bucket_name = coalesce(var.source_catalog_bucket_name, "${local.name_prefix}-source-catalog-${data.aws_caller_identity.current.account_id}")
   external_secret_arns = compact([
     var.vector_db_api_key_secret_arn,
@@ -73,12 +74,23 @@ data "archive_file" "processor_lambda" {
     content  = file("${path.module}/../lambda/incentive_catalog.json")
     filename = "incentive_catalog.json"
   }
+
+  source {
+    content  = file("${path.module}/../lambda/eligibility_rules.json")
+    filename = "eligibility_rules.json"
+  }
 }
 
 data "archive_file" "report_lambda" {
   type        = "zip"
   source_file = "${path.module}/../lambda/report_handler.py"
   output_path = "${path.module}/report_handler.zip"
+}
+
+data "archive_file" "analytics_lambda" {
+  type        = "zip"
+  source_file = "${path.module}/../lambda/analytics_handler.py"
+  output_path = "${path.module}/analytics_handler.zip"
 }
 
 data "archive_file" "source_refresh_lambda" {
@@ -133,6 +145,28 @@ resource "aws_dynamodb_table" "projects" {
 
   attribute {
     name = "project_id"
+    type = "S"
+  }
+
+  server_side_encryption {
+    enabled = true
+  }
+
+  ttl {
+    attribute_name = "expires_at"
+    enabled        = true
+  }
+
+  tags = local.common_tags
+}
+
+resource "aws_dynamodb_table" "analytics" {
+  name         = local.analytics_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "event_id"
+
+  attribute {
+    name = "event_id"
     type = "S"
   }
 
@@ -239,6 +273,13 @@ resource "aws_cloudwatch_log_group" "processor" {
 
 resource "aws_cloudwatch_log_group" "report" {
   name              = "/aws/lambda/${local.name_prefix}-report"
+  retention_in_days = var.log_retention_in_days
+
+  tags = local.common_tags
+}
+
+resource "aws_cloudwatch_log_group" "analytics" {
+  name              = "/aws/lambda/${local.name_prefix}-analytics"
   retention_in_days = var.log_retention_in_days
 
   tags = local.common_tags
@@ -472,6 +513,58 @@ resource "aws_iam_role_policy" "report" {
   policy = data.aws_iam_policy_document.report.json
 }
 
+resource "aws_iam_role" "analytics" {
+  name               = "${local.name_prefix}-analytics-role"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+
+  tags = local.common_tags
+}
+
+data "aws_iam_policy_document" "analytics" {
+  statement {
+    sid    = "WriteOwnLogs"
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+
+    resources = [
+      aws_cloudwatch_log_group.analytics.arn,
+      "${aws_cloudwatch_log_group.analytics.arn}:*"
+    ]
+  }
+
+  statement {
+    sid     = "WriteAnalyticsEvents"
+    effect  = "Allow"
+    actions = ["dynamodb:PutItem"]
+
+    resources = [aws_dynamodb_table.analytics.arn]
+  }
+
+  dynamic "statement" {
+    for_each = var.enable_xray_tracing ? [1] : []
+
+    content {
+      sid    = "WriteXRayTraces"
+      effect = "Allow"
+      actions = [
+        "xray:PutTelemetryRecords",
+        "xray:PutTraceSegments"
+      ]
+      resources = ["*"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "analytics" {
+  name   = "${local.name_prefix}-analytics-policy"
+  role   = aws_iam_role.analytics.id
+  policy = data.aws_iam_policy_document.analytics.json
+}
+
 resource "aws_iam_role" "source_refresh" {
   count = var.enable_source_refresh ? 1 : 0
 
@@ -594,6 +687,10 @@ resource "aws_lambda_function" "processor" {
       VECTOR_DB_PROVIDER           = var.vector_db_provider
       VECTOR_DB_ENDPOINT           = trimspace(var.vector_db_endpoint) == "" ? "__MOCK_DISABLED__" : var.vector_db_endpoint
       VECTOR_DB_API_KEY_SECRET_ARN = var.vector_db_api_key_secret_arn == null ? "__MOCK_DISABLED__" : var.vector_db_api_key_secret_arn
+      VECTOR_DB_NAMESPACE          = var.vector_db_namespace
+      VECTOR_DB_TOP_K              = tostring(var.vector_db_top_k)
+      VECTOR_DB_MIN_SCORE          = tostring(var.vector_db_min_score)
+      VECTOR_DB_API_VERSION        = var.vector_db_api_version
       EMBEDDING_PROVIDER           = var.embedding_provider
       EMBEDDING_API_ENDPOINT       = trimspace(var.embedding_api_endpoint) == "" ? "__MOCK_DISABLED__" : var.embedding_api_endpoint
       EMBEDDING_API_KEY_SECRET_ARN = var.embedding_api_key_secret_arn == null ? "__MOCK_DISABLED__" : var.embedding_api_key_secret_arn
@@ -642,6 +739,39 @@ resource "aws_lambda_function" "report" {
   depends_on = [
     aws_cloudwatch_log_group.report,
     aws_iam_role_policy.report
+  ]
+
+  tags = local.common_tags
+}
+
+resource "aws_lambda_function" "analytics" {
+  function_name = "${local.name_prefix}-analytics"
+  description   = "Records privacy-light GrantStack landing page and report usage events."
+  role          = aws_iam_role.analytics.arn
+  runtime       = var.lambda_runtime
+  handler       = "analytics_handler.lambda_handler"
+  architectures = ["arm64"]
+
+  filename         = data.archive_file.analytics_lambda.output_path
+  source_code_hash = data.archive_file.analytics_lambda.output_base64sha256
+
+  memory_size = 128
+  timeout     = 10
+
+  tracing_config {
+    mode = var.enable_xray_tracing ? "Active" : "PassThrough"
+  }
+
+  environment {
+    variables = {
+      ANALYTICS_TABLE_NAME = aws_dynamodb_table.analytics.name
+      ANALYTICS_TTL_DAYS   = tostring(var.analytics_ttl_days)
+    }
+  }
+
+  depends_on = [
+    aws_cloudwatch_log_group.analytics,
+    aws_iam_role_policy.analytics
   ]
 
   tags = local.common_tags
@@ -764,6 +894,14 @@ resource "aws_apigatewayv2_integration" "report" {
   timeout_milliseconds   = 30000
 }
 
+resource "aws_apigatewayv2_integration" "analytics" {
+  api_id                 = aws_apigatewayv2_api.http.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.analytics.invoke_arn
+  payload_format_version = "2.0"
+  timeout_milliseconds   = 30000
+}
+
 resource "aws_apigatewayv2_route" "post_projects" {
   api_id             = aws_apigatewayv2_api.http.id
   route_key          = "POST /projects"
@@ -784,6 +922,13 @@ resource "aws_apigatewayv2_route" "get_projects_index" {
   route_key          = "GET /projects"
   authorization_type = "NONE"
   target             = "integrations/${aws_apigatewayv2_integration.report.id}"
+}
+
+resource "aws_apigatewayv2_route" "post_analytics" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "POST /analytics"
+  authorization_type = "NONE"
+  target             = "integrations/${aws_apigatewayv2_integration.analytics.id}"
 }
 
 resource "aws_apigatewayv2_stage" "default" {
@@ -833,6 +978,14 @@ resource "aws_lambda_permission" "allow_http_api_report" {
   statement_id  = "AllowReportExecutionFromHttpApi"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.report.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.http.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "allow_http_api_analytics" {
+  statement_id  = "AllowAnalyticsExecutionFromHttpApi"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.analytics.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.http.execution_arn}/*/*"
 }
@@ -901,6 +1054,29 @@ resource "aws_cloudwatch_metric_alarm" "report_errors" {
 
   dimensions = {
     FunctionName = aws_lambda_function.report.function_name
+  }
+
+  tags = local.common_tags
+}
+
+resource "aws_cloudwatch_metric_alarm" "analytics_errors" {
+  count = var.enable_cloudwatch_alarms ? 1 : 0
+
+  alarm_name          = "${local.name_prefix}-analytics-errors"
+  alarm_description   = "Analytics Lambda has one or more errors."
+  namespace           = "AWS/Lambda"
+  metric_name         = "Errors"
+  statistic           = "Sum"
+  period              = 60
+  evaluation_periods  = 1
+  datapoints_to_alarm = 1
+  threshold           = 1
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = var.alarm_actions
+
+  dimensions = {
+    FunctionName = aws_lambda_function.analytics.function_name
   }
 
   tags = local.common_tags
@@ -1048,7 +1224,8 @@ resource "aws_cloudwatch_dashboard" "grantstack" {
             metrics = [
               ["AWS/Lambda", "Errors", "FunctionName", aws_lambda_function.ingestion.function_name, { stat = "Sum", label = "Ingestion" }],
               [".", ".", ".", aws_lambda_function.processor.function_name, { stat = "Sum", label = "Processor" }],
-              [".", ".", ".", aws_lambda_function.report.function_name, { stat = "Sum", label = "Report" }]
+              [".", ".", ".", aws_lambda_function.report.function_name, { stat = "Sum", label = "Report" }],
+              [".", ".", ".", aws_lambda_function.analytics.function_name, { stat = "Sum", label = "Analytics" }]
             ]
             period = 60
             view   = "timeSeries"
@@ -1066,7 +1243,8 @@ resource "aws_cloudwatch_dashboard" "grantstack" {
             metrics = [
               ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.ingestion.function_name, { stat = "p95", label = "Ingestion p95" }],
               [".", ".", ".", aws_lambda_function.processor.function_name, { stat = "p95", label = "Processor p95" }],
-              [".", ".", ".", aws_lambda_function.report.function_name, { stat = "p95", label = "Report p95" }]
+              [".", ".", ".", aws_lambda_function.report.function_name, { stat = "p95", label = "Report p95" }],
+              [".", ".", ".", aws_lambda_function.analytics.function_name, { stat = "p95", label = "Analytics p95" }]
             ]
             period = 60
             view   = "timeSeries"
@@ -1102,6 +1280,7 @@ resource "aws_cloudwatch_dashboard" "grantstack" {
             metrics = [
               ["AWS/DynamoDB", "ConsumedReadCapacityUnits", "TableName", aws_dynamodb_table.projects.name, { stat = "Sum", label = "Read capacity units" }],
               [".", "ConsumedWriteCapacityUnits", ".", aws_dynamodb_table.projects.name, { stat = "Sum", label = "Write capacity units" }],
+              [".", ".", ".", aws_dynamodb_table.analytics.name, { stat = "Sum", label = "Analytics write capacity units" }],
               [".", "ThrottledRequests", ".", aws_dynamodb_table.projects.name, { stat = "Sum", label = "Throttled requests" }]
             ]
             period = 300
@@ -1153,6 +1332,11 @@ output "projects_table_name" {
   value       = aws_dynamodb_table.projects.name
 }
 
+output "analytics_table_name" {
+  description = "DynamoDB analytics table name."
+  value       = aws_dynamodb_table.analytics.name
+}
+
 output "ingestion_function_name" {
   description = "Ingestion Lambda function name."
   value       = aws_lambda_function.ingestion.function_name
@@ -1166,6 +1350,11 @@ output "processor_function_name" {
 output "report_function_name" {
   description = "Report Lambda function name."
   value       = aws_lambda_function.report.function_name
+}
+
+output "analytics_function_name" {
+  description = "Analytics Lambda function name."
+  value       = aws_lambda_function.analytics.function_name
 }
 
 output "processing_queue_url" {

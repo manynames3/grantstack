@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="GrantStack helps manufacturers and expansion teams turn facility specs into cited public funding and incentive strategy."
+      content="GrantStack helps manufacturers and expansion teams quickly screen whether a facility expansion is worth deeper incentives diligence before hiring consultants."
     />
-    <title>GrantStack | AI Grant Intelligence for Expansion Teams</title>
+    <title>GrantStack | Incentive Screening for Expansion Teams</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -19,48 +19,52 @@
       </a>
       <nav class="nav-links" aria-label="Main menu">
         <a href="#problem">Problem</a>
-        <a href="#output">Output</a>
-        <a href="#workflow">Workflow</a>
-        <a href="#intake">Live intake</a>
+        <a href="#output">Report</a>
+        <a href="#cost">Cost</a>
+        <a href="#review">Review</a>
+        <a href="#intake">Run screen</a>
       </nav>
-      <a class="nav-action" href="#intake">Run a screen</a>
+      <a class="nav-action" href="#intake" data-analytics-event="cta_click" data-analytics-label="nav_run_screen">Run a screen</a>
     </header>
 
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
         <div class="section-inner hero-grid">
           <div class="hero-copy-block">
-            <p class="eyebrow">Live serverless grant-intelligence demo</p>
-            <h1 id="hero-title">Turn expansion specs into a cited incentive screen.</h1>
+            <p class="eyebrow">For manufacturers planning facility expansions</p>
+            <h1 id="hero-title">Know if incentives are worth pursuing before you hire a consultant.</h1>
             <p class="hero-copy">
-              GrantStack helps manufacturers, logistics operators, and capital-intensive teams decide whether public
-              funding is worth deeper diligence before a site decision hardens.
+              GrantStack turns rough project facts into a cited first-pass incentive screen: likely programs,
+              eligibility gaps, risk flags, and the next questions your team should answer before spending advisory budget.
             </p>
             <div class="hero-actions" aria-label="Primary actions">
-              <a class="button button-primary" href="#intake">Analyze a project</a>
-              <a class="button button-secondary" href="#output">View report output</a>
+              <a class="button button-primary" href="#intake" data-analytics-event="cta_click" data-analytics-label="hero_analyze_project">Screen a project</a>
+              <a class="button button-secondary" href="report.html?sample=true" data-analytics-event="cta_click" data-analytics-label="hero_sample_report">View sample report</a>
             </div>
-            <p class="hero-note">This demo submits to a real AWS API and opens a private tokenized report page.</p>
+            <p class="hero-note">
+              Use it before a site decision gets locked, before you brief finance, and before you ask a consulting firm
+              for a deeper engagement.
+            </p>
           </div>
 
-          <aside class="hero-product" aria-label="GrantStack live workflow preview">
+          <aside class="hero-product" aria-label="GrantStack sample screen preview">
             <div class="product-topline">
-              <span>grantstack.run</span>
-              <strong>live</strong>
+              <span>First-pass screen</span>
+              <strong>cited</strong>
             </div>
             <div class="product-input">
-              <p>Project intake</p>
+              <p>Expansion project</p>
               <dl>
                 <div><dt>Location</dt><dd>Raleigh, NC</dd></div>
-                <div><dt>Capex</dt><dd>$12.5M</dd></div>
+                <div><dt>Investment</dt><dd>$12.5M</dd></div>
                 <div><dt>Jobs</dt><dd>82</dd></div>
                 <div><dt>Facility</dt><dd>Advanced manufacturing</dd></div>
               </dl>
             </div>
             <div class="pipeline-row">
-              <span>API accepted</span>
-              <span>SQS queued</span>
-              <span>Report ready</span>
+              <span>Project facts</span>
+              <span>Rule checks</span>
+              <span>Advisor-ready questions</span>
             </div>
             <div class="product-output">
               <div>
@@ -68,52 +72,51 @@
                 <strong>82</strong>
               </div>
               <div>
-                <span>Evidence</span>
-                <strong>3 cited matches</strong>
+                <span>Recommended path</span>
+                <strong>Validate 3 programs</strong>
               </div>
             </div>
           </aside>
         </div>
 
         <div class="section-inner proof-rail" aria-label="Product proof points">
-          <span>Cloudflare Pages frontend</span>
-          <span>AWS Lambda + SQS worker</span>
-          <span>DynamoDB On-Demand reports</span>
-          <span>Terraform-managed infrastructure</span>
+          <span>Cited official sources</span>
+          <span>Eligibility gaps shown plainly</span>
+          <span>Built for early site decisions</span>
+          <span>Use before consultant spend</span>
         </div>
       </section>
 
       <section id="problem" class="problem-section">
         <div class="section-inner problem-layout">
           <div class="section-copy">
-            <p class="section-label">The painful workflow</p>
-            <h2>Incentive diligence starts while the project is still incomplete.</h2>
+            <p class="section-label">The painful part</p>
+            <h2>You need a go/no-go signal before the project is fully baked.</h2>
             <p>
-              Expansion teams need a first-pass answer before every detail is final. The usual path is slow: gather
-              scattered facts, search program pages, ask advisors basic fit questions, and hope no obvious incentive
-              category was missed.
+              Incentive diligence usually starts before the final site, wage plan, hiring schedule, and investment
+              details are locked. That makes it hard to know whether the opportunity deserves advisor time yet.
             </p>
           </div>
           <div class="pain-table" aria-label="Expansion diligence pain points">
             <article>
               <span>01</span>
               <div>
-                <h3>Program fit is fragmented</h3>
-                <p>Eligibility depends on location, jobs, wages, capex, timing, industry, and local discretion.</p>
+                <h3>Site decisions move faster than diligence</h3>
+                <p>Leadership wants a directional answer while teams are still comparing locations and scenarios.</p>
               </div>
             </article>
             <article>
               <span>02</span>
               <div>
-                <h3>Generic AI is not a workflow</h3>
-                <p>Prompts do not provide private report links, status tracking, retries, source refresh, or an audit trail.</p>
+                <h3>Consultant calls are costly when the facts are rough</h3>
+                <p>You may spend paid advisor time just figuring out what questions should have been prepared first.</p>
               </div>
             </article>
             <article>
               <span>03</span>
               <div>
-                <h3>Manual review is expensive too early</h3>
-                <p>Specialists are still needed, but not every rough expansion idea deserves a full advisory sprint.</p>
+                <h3>Bad assumptions get into the business case</h3>
+                <p>Teams can overstate incentive value before eligibility, timing, and missing facts are checked.</p>
               </div>
             </article>
           </div>
@@ -125,14 +128,14 @@
           <div class="report-preview" aria-label="Sample GrantStack report">
             <div class="preview-header">
               <span>Private project screen</span>
-              <strong>COMPLETED</strong>
+              <strong>NOT ADVISOR-REVIEWED</strong>
             </div>
             <div class="score-row">
               <div>
                 <span>Eligibility score</span>
                 <strong>82</strong>
               </div>
-              <p>Advanced manufacturing expansion · Raleigh, NC · $12.5M capex · 82 net-new jobs</p>
+              <p>Advanced manufacturing expansion · Raleigh, NC · $12.5M investment · 82 net-new jobs</p>
             </div>
             <div class="recommendation-list">
               <article>
@@ -153,49 +156,76 @@
             </div>
           </div>
           <div class="section-copy">
-            <p class="section-label">What the buyer receives</p>
+            <p class="section-label">What your team gets</p>
             <h2>A source-backed memo, not a vague program list.</h2>
             <p>
-              The report is designed for the first buyer conversation: what looks promising, what could break
-              eligibility, what facts are missing, and which official sources need validation.
+              The report is designed for the first internal conversation: what looks promising, what could break
+              eligibility, what facts are missing, and what needs expert validation before anyone relies on the numbers.
             </p>
             <ul class="check-list">
               <li>Cited program recommendations with source URLs.</li>
-              <li>Strengths tied to jobs, capex, facility type, and location.</li>
+              <li>Strengths tied to jobs, investment, facility type, and location.</li>
               <li>Risk flags before teams overstate incentive value.</li>
-              <li>Next diligence questions for finance, site selection, or advisors.</li>
+              <li>Next diligence questions for finance, site selection, or outside advisors.</li>
             </ul>
+            <div class="sample-actions">
+              <a class="button button-secondary" href="report.html?sample=true" data-analytics-event="cta_click" data-analytics-label="output_open_sample_report">Open sample report</a>
+              <span>No email required. This is a representative report format, not a live project submission.</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="workflow" class="workflow-section">
+      <section id="cost" class="cost-section">
         <div class="section-inner">
-          <div class="workflow-heading">
-            <p class="section-label">How it runs</p>
-            <h2>Built like an async product, not a one-off AI form.</h2>
+          <div class="cost-heading">
+            <p class="section-label">Cost comparison</p>
+            <h2>Use GrantStack before you spend consulting budget.</h2>
+            <p>
+              Consulting firms are valuable when a project is ready for formal review, negotiation, applications, and
+              compliance. GrantStack is for the earlier question: is this expansion worth taking to that level yet?
+            </p>
           </div>
-          <div class="workflow-grid">
-            <article>
-              <span>01</span>
-              <h3>Submit specs</h3>
-              <p>Capture location, capex, jobs, facility type, wage, timeline, and competing sites.</p>
+          <div class="cost-comparison-grid">
+            <article class="cost-card">
+              <span>Consulting-first</span>
+              <h3>Best after the project clears basic fit</h3>
+              <ul>
+                <li>Custom-scoped advisory work before you may know the strongest programs.</li>
+                <li>Meetings and discovery often start with basic facts your team can prepare earlier.</li>
+                <li>Best for final eligibility, applications, negotiations, and compliance.</li>
+              </ul>
             </article>
-            <article>
-              <span>02</span>
-              <h3>Queue work</h3>
-              <p>API Gateway and Lambda return `202 Accepted`, then SQS handles processing asynchronously.</p>
+            <article class="cost-card cost-card-featured">
+              <span>GrantStack-first</span>
+              <h3>Best before authorizing deeper diligence</h3>
+              <ul>
+                <li>Run a structured screen from location, jobs, investment, facility type, wages, and timeline.</li>
+                <li>See likely programs, weak spots, missing facts, and advisor-ready questions.</li>
+                <li>Reserve consulting spend for projects with enough fit to justify expert review.</li>
+              </ul>
             </article>
-            <article>
-              <span>03</span>
-              <h3>Screen evidence</h3>
-              <p>The worker checks the active source catalog and is provider-ready for LLM/vector retrieval.</p>
-            </article>
-            <article>
-              <span>04</span>
-              <h3>Render report</h3>
-              <p>DynamoDB stores the status and report behind a private tokenized result link.</p>
-            </article>
+          </div>
+          <p class="cost-note">
+            GrantStack is not a substitute for legal, tax, grants, or economic-development advice. It is a lower-friction
+            first screen that helps teams decide when outside specialists are worth bringing in.
+          </p>
+          <div class="cost-rows" aria-label="Consulting firm cost comparison">
+            <div>
+              <span>When you use it</span>
+              <strong>Consultants: after scope is real</strong>
+              <strong>GrantStack: before paid diligence</strong>
+            </div>
+            <div>
+              <span>What you pay for</span>
+              <strong>Expert judgment, applications, negotiations, compliance</strong>
+              <strong>Fast triage, cited fit signals, missing-fact checklist</strong>
+            </div>
+            <div>
+              <span>Cost risk</span>
+              <strong>Spending advisory time on projects that may not qualify</strong>
+              <strong>Screening weak projects before they consume advisor budget</strong>
+            </div>
           </div>
         </div>
       </section>
@@ -203,21 +233,60 @@
       <section class="differentiator-section">
         <div class="section-inner differentiator-layout">
           <div class="section-copy">
-            <p class="section-label">Why this exists</p>
-            <h2>The obvious alternatives each miss part of the job.</h2>
+            <p class="section-label">Where it fits</p>
+            <h2>GrantStack does the first screen. People still make the final call.</h2>
           </div>
           <div class="comparison-grid">
             <article>
               <h3>Spreadsheets</h3>
-              <p>Good for tracking, weak for turning raw project specs into a cited decision-support memo.</p>
+              <p>Useful once you know what to track, but weak for turning rough specs into a sourced first memo.</p>
             </article>
             <article>
-              <h3>ChatGPT alone</h3>
-              <p>Useful for brainstorming, but not tied to private reports, retries, source refresh, or status flags.</p>
+              <h3>Asking a chatbot</h3>
+              <p>Helpful for plain-language explanations, but easy to over-trust without citations and review steps.</p>
             </article>
             <article>
-              <h3>Consulting from day zero</h3>
-              <p>Important for final validation, but often too heavy before a project has cleared basic fit.</p>
+              <h3>Consulting firms</h3>
+              <p>Best for final validation and negotiation, but heavy when the project is still changing weekly.</p>
+            </article>
+            <article>
+              <h3>GrantStack</h3>
+              <p>Best for early triage: likely paths, eligibility gaps, and the questions to ask before paid review.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="review" class="review-section">
+        <div class="section-inner review-layout">
+          <div class="section-copy">
+            <p class="section-label">Advisory guardrails</p>
+            <h2>Use the screen as a memo, not final advice.</h2>
+            <p>
+              GrantStack helps your team prepare. It should make advisor conversations sharper, not replace qualified
+              review when money, applications, compliance obligations, or public commitments are involved.
+            </p>
+          </div>
+          <div class="review-steps" aria-label="Paid advisory review workflow">
+            <article>
+              <span>01</span>
+              <h3>Automated screen</h3>
+              <p>Capture project inputs and generate a source-backed memo with fit signals, risk flags, and assumptions.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Fact validation</h3>
+              <p>Confirm county, wages, business activity, timing, site control, job definitions, and competing-location facts.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Advisor review</h3>
+              <p>A qualified economic-development, legal, tax, or grants advisor reviews program fit and application risk.</p>
+            </article>
+            <article>
+              <span>04</span>
+              <h3>Agency confirmation</h3>
+              <p>Final eligibility, award amount, timing, and compliance requirements are confirmed with the issuing agency.</p>
             </article>
           </div>
         </div>
@@ -226,22 +295,37 @@
       <section id="intake" class="intake-section">
         <div class="section-inner intake-layout">
           <div class="section-copy">
-            <p class="section-label">Live intake</p>
-            <h2>Run a sample project through the deployed backend.</h2>
+            <p class="section-label">Run your first screen</p>
+            <h2>Enter the project facts your team already has.</h2>
             <p>
-              Use a real or representative expansion scenario. GrantStack accepts the project immediately, queues the
-              analysis, and opens the private report page when the backend starts processing.
+              Use a real or representative expansion scenario. You will get a private report link with cited matches,
+              risk flags, missing facts, and next questions for your internal team or outside advisors.
+            </p>
+            <p class="sample-path">
+              Want to inspect the output first?
+              <a href="report.html?sample=true" data-analytics-event="cta_click" data-analytics-label="intake_sample_report">Open the sample report</a>.
             </p>
             <div class="photo-card">
               <img src="assets/hero-industrial-floor.jpg" alt="Industrial facility interior under construction" />
-              <span>Best fit: expansion projects with meaningful capex, hiring, and a real site decision.</span>
+              <span>Best fit: expansion projects with meaningful investment, hiring, and a real site decision.</span>
             </div>
           </div>
 
           <form class="intake-form" id="project-form">
             <div class="form-heading">
-              <span>Project screen</span>
-              <strong>Private report link returned after submission</strong>
+              <div>
+                <span>First-pass screen</span>
+                <strong>Private report link returned after submission</strong>
+              </div>
+              <button
+                class="button button-secondary form-sample-button"
+                type="button"
+                id="fill-sample"
+                data-analytics-event="sample_inputs_click"
+                data-analytics-label="fill_sample_inputs"
+              >
+                Use sample inputs
+              </button>
             </div>
             <div class="field-grid">
               <label>
@@ -254,7 +338,7 @@
               </label>
               <label>
                 <span>Capital investment</span>
-                <input name="capex" type="number" min="1" step="1000" required placeholder="12500000" />
+                <input name="capex" type="number" min="1" step="1" required placeholder="12500000" />
               </label>
               <label>
                 <span>New jobs</span>
@@ -270,7 +354,7 @@
               </label>
               <label>
                 <span>Average wage</span>
-                <input name="average_wage" type="number" min="1" step="1000" placeholder="68000" />
+                <input name="average_wage" type="number" min="1" step="1" placeholder="68000" />
               </label>
               <label>
                 <span>Decision timeline</span>
@@ -280,8 +364,15 @@
                 <span>Competing locations</span>
                 <input name="competing_locations" placeholder="SC, TN, Mexico" />
               </label>
+              <label class="ack-field full-field">
+                <input name="screening_acknowledgement" type="checkbox" required />
+                <span>
+                  I understand this is a first-pass screening memo. Paid advisory use requires qualified review, source
+                  validation, and agency confirmation before relying on any incentive strategy.
+                </span>
+              </label>
             </div>
-            <button class="button button-primary submit-button" type="submit">Submit project</button>
+            <button class="button button-primary submit-button" type="submit">Get first-pass screen</button>
             <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
           </form>
         </div>
@@ -298,6 +389,7 @@
       </div>
     </footer>
 
+    <script src="analytics.js" defer></script>
     <script src="app.js" defer></script>
   </body>
 </html>

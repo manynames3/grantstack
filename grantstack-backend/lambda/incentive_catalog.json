@@ -1,5 +1,5 @@
 {
-  "version": "2026-05-21",
+  "version": "2026-05-22",
   "sources": [
     {
       "id": "ga-job-and-quality-jobs-tax-credits",
@@ -14,7 +14,7 @@
       "evidence_summary": "Georgia's flagship job-related tax credits evaluate job creation, location, industry, wage levels, and maintenance of qualifying jobs.",
       "source_note": "Official Georgia Department of Revenue tax-credit summary page.",
       "source_url": "https://dor.georgia.gov/tax-credit-summaries",
-      "last_verified": "2026-05-21",
+      "last_verified": "2026-05-22",
       "diligence_questions": [
         "Which county tier or special zone applies to the final site?",
         "Do the proposed jobs fall within a qualifying industry sector?",
@@ -34,7 +34,7 @@
       "evidence_summary": "Georgia Quick Start provides customized workforce training for qualified new and expanding companies and is positioned as an in-kind discretionary incentive.",
       "source_note": "Official Georgia Quick Start program page.",
       "source_url": "https://www.georgiaquickstart.org/about-us/",
-      "last_verified": "2026-05-21",
+      "last_verified": "2026-05-22",
       "diligence_questions": [
         "What roles, skills, and hiring waves must the training plan cover?",
         "When must training start relative to construction and commissioning?",
@@ -54,7 +54,7 @@
       "evidence_summary": "Georgia economic-development finance resources can support private job creation and expansion projects, often coordinated with state and local development partners.",
       "source_note": "Official Georgia Department of Community Affairs REBA program page.",
       "source_url": "https://dca.georgia.gov/community-assistance/community-development/regional-economic-business-assistance-reba",
-      "last_verified": "2026-05-21",
+      "last_verified": "2026-05-22",
       "diligence_questions": [
         "Is the project competitive with another state or local jurisdiction?",
         "Which public infrastructure or site-readiness gap needs support?",
@@ -74,7 +74,7 @@
       "evidence_summary": "JDIG is a performance-based discretionary incentive for competitive job-creation and investment projects in North Carolina.",
       "source_note": "Official North Carolina Department of Commerce JDIG program page.",
       "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/job-development-investment-grant-jdig",
-      "last_verified": "2026-05-21",
+      "last_verified": "2026-05-22",
       "diligence_questions": [
         "Can the company document a competitive location decision?",
         "How do proposed wages compare with the county average wage?",
@@ -94,7 +94,7 @@
       "evidence_summary": "OneNC is a discretionary cash-grant program used to respond quickly to competitive job-creation projects and requires local participation.",
       "source_note": "Official North Carolina Department of Commerce One North Carolina Fund page.",
       "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/one-north-carolina-fund",
-      "last_verified": "2026-05-21",
+      "last_verified": "2026-05-22",
       "diligence_questions": [
         "What local match can the community provide?",
         "Which job, wage, and investment commitments are realistic for the performance agreement?",
@@ -114,7 +114,7 @@
       "evidence_summary": "North Carolina's Customized Training Program provides training and support services through the state's community college network for new, expanding, and existing businesses.",
       "source_note": "Official North Carolina Department of Commerce customized training page.",
       "source_url": "https://www.commerce.nc.gov/grants-incentives/workforce-grants/customized-training",
-      "last_verified": "2026-05-21",
+      "last_verified": "2026-05-22",
       "diligence_questions": [
         "Which community college would deliver the training plan?",
         "What technical skills and productivity outcomes should training address?",
@@ -134,11 +134,391 @@
       "evidence_summary": "Job Ready Grants support recruitment, talent development, and work-based learning activities tied to economic development projects in North Carolina.",
       "source_note": "Official North Carolina Department of Commerce Job Ready Grants page.",
       "source_url": "https://www.commerce.nc.gov/grants-incentives/workforce-grants/job-ready-grants",
-      "last_verified": "2026-05-21",
+      "last_verified": "2026-05-22",
       "diligence_questions": [
         "Which local workforce board would sponsor or coordinate the application?",
         "What recruiting and talent pipeline gaps need funding?",
         "How many new hires will be tied directly to the project?"
+      ]
+    },
+    {
+      "id": "sc-job-development-credit",
+      "program_name": "South Carolina Job Development Credit",
+      "category": "Discretionary cash grant",
+      "jurisdiction": "South Carolina",
+      "states": ["SC"],
+      "min_jobs": 10,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "processing", "corporate office", "warehouse", "distribution", "research", "development", "agribusiness", "tourism"],
+      "location_keywords": ["south carolina", "sc", "charleston", "columbia", "greenville", "spartanburg"],
+      "evidence_summary": "South Carolina's Job Development Credit reimburses approved companies from new employee withholding for eligible capital expenditures tied to new full-time jobs.",
+      "source_note": "Official South Carolina Department of Commerce state discretionary incentives page.",
+      "source_url": "https://www.sccommerce.com/ko/node/47",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Does the project create at least 10 new full-time jobs or meet a special facility threshold?",
+        "Will employees receive qualifying health benefits?",
+        "How do wages compare with the county average wage?"
+      ]
+    },
+    {
+      "id": "sc-discretionary-infrastructure-grants",
+      "program_name": "South Carolina Set-Aside, Closing Fund, and Rural Infrastructure Fund",
+      "category": "Infrastructure",
+      "jurisdiction": "South Carolina",
+      "states": ["SC"],
+      "min_jobs": 25,
+      "min_capex": 5000000,
+      "facility_keywords": ["manufacturing", "industrial", "warehouse", "distribution", "infrastructure", "site readiness", "water", "sewer", "road"],
+      "location_keywords": ["south carolina", "sc", "charleston", "columbia", "greenville", "spartanburg"],
+      "evidence_summary": "South Carolina discretionary grant funds can support road, water, sewer, infrastructure, site improvements, and high-impact economic development projects.",
+      "source_note": "Official South Carolina Department of Commerce state discretionary incentives page.",
+      "source_url": "https://www.sccommerce.com/ko/node/47",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Which local government or public entity would sponsor infrastructure support?",
+        "What road, water, sewer, or site-improvement need is tied to the project?",
+        "Is the site in a rural county tier or a high-impact recruitment context?"
+      ]
+    },
+    {
+      "id": "sc-readysc",
+      "program_name": "readySC",
+      "category": "Workforce training",
+      "jurisdiction": "South Carolina",
+      "states": ["SC"],
+      "min_jobs": 10,
+      "min_capex": 0,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "automotive", "aerospace", "life sciences", "distribution"],
+      "location_keywords": ["south carolina", "sc", "charleston", "columbia", "greenville", "spartanburg"],
+      "evidence_summary": "readySC provides recruiting and training assistance through the South Carolina Technical College System for expanding or relocating companies.",
+      "source_note": "Official South Carolina Department of Commerce workforce incentives page.",
+      "source_url": "https://www.sccommerce.com/why-sc/workforce-development/workforce-incentives",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Which roles and technical skills need a custom curriculum?",
+        "Which technical college would support delivery?",
+        "When must recruiting and training begin relative to commissioning?"
+      ]
+    },
+    {
+      "id": "tn-fasttrack-job-training-assistance",
+      "program_name": "Tennessee FastTrack Job Training Assistance",
+      "category": "Workforce training",
+      "jurisdiction": "Tennessee",
+      "states": ["TN"],
+      "min_jobs": 25,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "industrial", "distribution", "headquarters", "advanced", "automotive", "logistics"],
+      "location_keywords": ["tennessee", "tn", "nashville", "memphis", "knoxville", "chattanooga"],
+      "evidence_summary": "Tennessee FastTrack Job Training Assistance helps offset costs for training new employees, upgraded employees, and retained employees tied to expansion or relocation activity.",
+      "source_note": "Official Transparent Tennessee FastTrack program reporting and metrics pages.",
+      "source_url": "https://www.tn.gov/transparenttn/state-financial-overview/open-ecd/openecd/fasttrack-baseline-and-performance-reports.html",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "What new-hire or upgraded-position training costs need support?",
+        "What hiring schedule and skill profile can be documented?",
+        "Which FastTrack reporting obligations would apply?"
+      ]
+    },
+    {
+      "id": "tn-fasttrack-infrastructure-development",
+      "program_name": "Tennessee FastTrack Infrastructure Development",
+      "category": "Infrastructure",
+      "jurisdiction": "Tennessee",
+      "states": ["TN"],
+      "min_jobs": 25,
+      "min_capex": 5000000,
+      "facility_keywords": ["manufacturing", "industrial", "infrastructure", "site readiness", "water", "sewer", "road", "utility"],
+      "location_keywords": ["tennessee", "tn", "nashville", "memphis", "knoxville", "chattanooga"],
+      "evidence_summary": "FastTrack Infrastructure Development is one of Tennessee's grant programs used to support public infrastructure needs associated with expansion or relocation projects.",
+      "source_note": "Official Transparent Tennessee FastTrack program reporting and metrics pages.",
+      "source_url": "https://www.tn.gov/transparenttn/state-financial-overview/open-ecd/openecd/tnecd-performance-metrics/openecd-business-development-quick-stats/fasttrack-cost-per-job.html",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "What public infrastructure scope is required for the project?",
+        "Which public sponsor would own or deliver the improvements?",
+        "How are job and capex commitments tied to the infrastructure need?"
+      ]
+    },
+    {
+      "id": "tn-fasttrack-economic-development-fund",
+      "program_name": "Tennessee FastTrack Economic Development Fund",
+      "category": "Discretionary cash grant",
+      "jurisdiction": "Tennessee",
+      "states": ["TN"],
+      "min_jobs": 25,
+      "min_capex": 5000000,
+      "facility_keywords": ["manufacturing", "industrial", "headquarters", "distribution", "logistics", "automotive", "advanced"],
+      "location_keywords": ["tennessee", "tn", "nashville", "memphis", "knoxville", "chattanooga"],
+      "evidence_summary": "Tennessee's FastTrack Economic Development grants can offset expansion and relocation costs for projects with job-creation commitments.",
+      "source_note": "Official Transparent Tennessee FastTrack program reporting and metrics pages.",
+      "source_url": "https://www.tn.gov/transparenttn/state-financial-overview/open-ecd/openecd/tnecd-performance-metrics/openecd-business-development-quick-stats/fasttrack-cost-per-job.html",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "What company costs remain influenceable by a grant?",
+        "Which jobs and capital investment commitments can be contracted?",
+        "Does the project have a competitive location decision or retention risk?"
+      ]
+    },
+    {
+      "id": "tx-enterprise-fund",
+      "program_name": "Texas Enterprise Fund",
+      "category": "Discretionary cash grant",
+      "jurisdiction": "Texas",
+      "states": ["TX"],
+      "min_jobs": 75,
+      "min_capex": 10000000,
+      "facility_keywords": ["manufacturing", "advanced", "semiconductor", "industrial", "headquarters", "life sciences", "technology", "distribution"],
+      "location_keywords": ["texas", "tx", "austin", "dallas", "fort worth", "houston", "san antonio"],
+      "evidence_summary": "The Texas Enterprise Fund awards deal-closing cash grants for competitive projects with significant capital investment and new employment where a Texas site competes with an out-of-state option.",
+      "source_note": "Official Texas Economic Development & Tourism Office Texas Enterprise Fund page.",
+      "source_url": "https://gov.texas.gov/business/page/texas-enterprise-fund",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Is one Texas site competing with a viable out-of-state option before a location decision?",
+        "Does job creation exceed the urban or rural threshold?",
+        "Will average wages meet or exceed the county average wage?"
+      ]
+    },
+    {
+      "id": "tx-skills-development-fund",
+      "program_name": "Texas Skills Development Fund",
+      "category": "Workforce training",
+      "jurisdiction": "Texas",
+      "states": ["TX"],
+      "min_jobs": 10,
+      "min_capex": 0,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "technology", "distribution", "energy", "logistics"],
+      "location_keywords": ["texas", "tx", "austin", "dallas", "fort worth", "houston", "san antonio"],
+      "evidence_summary": "The Texas Skills Development Fund supports customized training through eligible public training partners for new workers or upgraded skills for existing workers.",
+      "source_note": "Official Texas Workforce Commission Skills Development Fund page.",
+      "source_url": "https://www.twc.texas.gov/programs/skills-development-fund",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Which eligible college, workforce board, or TEEX partner would apply?",
+        "Are trainees full-time W-2 employees?",
+        "What training curriculum and wage outcomes can be documented?"
+      ]
+    },
+    {
+      "id": "tx-enterprise-zone-program",
+      "program_name": "Texas Enterprise Zone Program",
+      "category": "Tax refund",
+      "jurisdiction": "Texas",
+      "states": ["TX"],
+      "min_jobs": 25,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "industrial", "distribution", "logistics", "headquarters", "technology"],
+      "location_keywords": ["texas", "tx", "austin", "dallas", "fort worth", "houston", "san antonio"],
+      "evidence_summary": "The Texas Enterprise Zone Program is a state sales and use tax refund program requiring community nomination, investment/job thresholds, and qualifying employee criteria.",
+      "source_note": "Official Texas Economic Development & Tourism Office Enterprise Zone Program page.",
+      "source_url": "https://gov.texas.gov/business/page/texas-enterprise-zone-program",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Will the local community nominate the company?",
+        "Which capital investment and job creation or retention bracket applies?",
+        "Can qualifying employee criteria be documented?"
+      ]
+    },
+    {
+      "id": "oh-job-creation-tax-credit",
+      "program_name": "Ohio Job Creation Tax Credit",
+      "category": "Tax credit",
+      "jurisdiction": "Ohio",
+      "states": ["OH"],
+      "min_jobs": 10,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "distribution", "logistics", "headquarters", "technology"],
+      "location_keywords": ["ohio", "oh", "columbus", "cleveland", "cincinnati", "dayton", "toledo"],
+      "evidence_summary": "Ohio's Job Creation Tax Credit is a refundable performance-based credit tied to created payroll and requires approval by the Ohio Tax Credit Authority.",
+      "source_note": "Official JobsOhio incentives eligibility and requirements page.",
+      "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Can the company create at least 10 jobs within three years?",
+        "Will new payroll meet current program thresholds?",
+        "What Tax Credit Authority approval timing applies?"
+      ]
+    },
+    {
+      "id": "oh-jobsohio-workforce-grant",
+      "program_name": "JobsOhio Workforce Grant",
+      "category": "Workforce training",
+      "jurisdiction": "Ohio",
+      "states": ["OH"],
+      "min_jobs": 10,
+      "min_capex": 0,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "technology", "production", "distribution", "logistics"],
+      "location_keywords": ["ohio", "oh", "columbus", "cleveland", "cincinnati", "dayton", "toledo"],
+      "evidence_summary": "JobsOhio Workforce Grant support may consider job creation, employee training, operational efficiency, production expansion, and job retention.",
+      "source_note": "Official JobsOhio incentives eligibility and requirements page.",
+      "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "What training expenses are tied to job creation or production expansion?",
+        "Which jobs are new, retained, or upskilled?",
+        "What training period and documentation requirements apply?"
+      ]
+    },
+    {
+      "id": "oh-jobsohio-revitalization-program",
+      "program_name": "JobsOhio Revitalization Program",
+      "category": "Site readiness",
+      "jurisdiction": "Ohio",
+      "states": ["OH"],
+      "min_jobs": 10,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "industrial", "brownfield", "redevelopment", "site readiness", "revitalization", "building"],
+      "location_keywords": ["ohio", "oh", "columbus", "cleveland", "cincinnati", "dayton", "toledo"],
+      "evidence_summary": "JobsOhio revitalization assistance can support site redevelopment needs where development and job creation are likely.",
+      "source_note": "Official JobsOhio incentives eligibility and requirements page.",
+      "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Is there a brownfield, vacant, or underutilized site condition?",
+        "What redevelopment cost is blocking the project?",
+        "What job creation or reuse outcome supports the public case?"
+      ]
+    },
+    {
+      "id": "in-edge-tax-credit",
+      "program_name": "Indiana Economic Development for a Growing Economy Tax Credit",
+      "category": "Tax credit",
+      "jurisdiction": "Indiana",
+      "states": ["IN"],
+      "min_jobs": 10,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "life sciences", "semiconductor", "headquarters", "logistics"],
+      "location_keywords": ["indiana", "in", "indianapolis", "fort wayne", "south bend", "evansville"],
+      "evidence_summary": "Indiana EDGE provides a refundable payroll tax credit to support job creation, capital investment, and improved standards of living for Indiana residents.",
+      "source_note": "Official Indiana Economic Development Corporation EDGE page.",
+      "source_url": "https://iedc.in.gov/indiana-advantages/investments/economic-development-for-a-growing-economy-tax-credit/overview",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "What hiring ramp and withholding increase can be committed?",
+        "What payroll and job-retention compliance reporting would apply?",
+        "Does the project require IEDC approval before commitments are made?"
+      ]
+    },
+    {
+      "id": "in-skills-enhancement-fund",
+      "program_name": "Indiana Skills Enhancement Fund",
+      "category": "Workforce training",
+      "jurisdiction": "Indiana",
+      "states": ["IN"],
+      "min_jobs": 10,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "life sciences", "technology", "semiconductor", "logistics"],
+      "location_keywords": ["indiana", "in", "indianapolis", "fort wayne", "south bend", "evansville"],
+      "evidence_summary": "Indiana's Skills Enhancement Fund reimburses a portion of eligible training costs tied to new capital investment and skill upgrades.",
+      "source_note": "Official Indiana Economic Development Corporation SEF page.",
+      "source_url": "https://iedc.in.gov/indiana-advantages/investments/skills-enhancement-fund-sef/overview",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Will training lead to post-secondary credentials, recognized industry credentials, or specialized company training?",
+        "Which employee groups and wage increases are tied to the project?",
+        "What costs fall within the grant agreement dates?"
+      ]
+    },
+    {
+      "id": "in-hoosier-business-investment-tax-credit",
+      "program_name": "Indiana Hoosier Business Investment Tax Credit",
+      "category": "Tax credit",
+      "jurisdiction": "Indiana",
+      "states": ["IN"],
+      "min_jobs": 10,
+      "min_capex": 1000000,
+      "facility_keywords": ["manufacturing", "advanced", "industrial", "headquarters", "life sciences", "semiconductor", "technology"],
+      "location_keywords": ["indiana", "in", "indianapolis", "fort wayne", "south bend", "evansville"],
+      "evidence_summary": "Indiana's Hoosier Business Investment Tax Credit supports capital investment and job creation through non-refundable corporate income tax credits based on eligible capital investment.",
+      "source_note": "Official Indiana Economic Development Corporation HBI page.",
+      "source_url": "https://iedc.in.gov/indiana-advantages/investments/hoosier-business-investment-tax-credit/overview",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "What eligible capital investment can be phased in during the certification period?",
+        "What job creation or standard-of-living impact supports the project?",
+        "What approval must occur before investment commitments?"
+      ]
+    },
+    {
+      "id": "alabama-jobs-act-jobs-credit",
+      "program_name": "Alabama Jobs Act Jobs Credit",
+      "category": "Payroll rebate",
+      "jurisdiction": "Alabama",
+      "states": ["AL"],
+      "min_jobs": 50,
+      "min_capex": 0,
+      "facility_keywords": ["manufacturing", "industrial", "technology", "pharmaceutical", "biomedical", "medical", "data center", "renewable energy", "engineering"],
+      "location_keywords": ["alabama", "al", "birmingham", "huntsville", "mobile", "montgomery"],
+      "evidence_summary": "Alabama Jobs Act incentives include a discretionary jobs credit based on eligible employee wages, with lower thresholds for targeted, jumpstart, technology, and specified industry projects.",
+      "source_note": "Official Made in Alabama Jobs Act incentive summary.",
+      "source_url": "https://www.madeinalabama.com/resources/documents/job-acts-summary/",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Is the site in a targeted or jumpstart county?",
+        "Does the activity qualify under the Jobs Act business activity list?",
+        "What net new full-time job threshold applies to this project type?"
+      ]
+    },
+    {
+      "id": "alabama-jobs-act-investment-credit",
+      "program_name": "Alabama Jobs Act Investment Credit",
+      "category": "Tax credit",
+      "jurisdiction": "Alabama",
+      "states": ["AL"],
+      "min_jobs": 10,
+      "min_capex": 2000000,
+      "facility_keywords": ["manufacturing", "industrial", "technology", "pharmaceutical", "biomedical", "medical", "data center", "renewable energy", "engineering"],
+      "location_keywords": ["alabama", "al", "birmingham", "huntsville", "mobile", "montgomery"],
+      "evidence_summary": "Alabama's Investment Credit can provide a discretionary credit based on qualified capital investment for approved projects that create jobs in Alabama.",
+      "source_note": "Official Alabama Department of Revenue Investment Credit page.",
+      "source_url": "https://www.revenue.alabama.gov/tax-incentives/investment-credit/",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Has the Alabama Department of Commerce approved the project path?",
+        "Which county/project threshold applies?",
+        "What qualified capital investment is eligible under the project agreement?"
+      ]
+    },
+    {
+      "id": "ky-business-investment-program",
+      "program_name": "Kentucky Business Investment Program",
+      "category": "Tax credit",
+      "jurisdiction": "Kentucky",
+      "states": ["KY"],
+      "min_jobs": 10,
+      "min_capex": 100000,
+      "facility_keywords": ["manufacturing", "agribusiness", "headquarters", "technology", "nonretail service", "renewable energy", "industrial"],
+      "location_keywords": ["kentucky", "ky", "louisville", "lexington", "bowling green", "frankfort"],
+      "evidence_summary": "Kentucky Business Investment provides income tax credits and wage assessments to eligible new and expanding companies that locate or expand operations in Kentucky.",
+      "source_note": "Official Kentucky Cabinet for Economic Development financial incentives page.",
+      "source_url": "https://newkentuckyhome.ky.gov/Locating_Expanding/kybizince.aspx",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "Does the project activity fall into a qualifying Kentucky industry category?",
+        "What jobs, wages, benefits, and eligible costs can be documented?",
+        "Is the county eligible for enhanced incentives?"
+      ]
+    },
+    {
+      "id": "ky-bluegrass-state-skills-corporation",
+      "program_name": "Bluegrass State Skills Corporation",
+      "category": "Workforce training",
+      "jurisdiction": "Kentucky",
+      "states": ["KY"],
+      "min_jobs": 10,
+      "min_capex": 0,
+      "facility_keywords": ["manufacturing", "agribusiness", "technology", "headquarters", "hospital", "renewable energy", "industrial"],
+      "location_keywords": ["kentucky", "ky", "louisville", "lexington", "bowling green", "frankfort"],
+      "evidence_summary": "BSSC provides Grant-in-Aid reimbursements and Skills Training Investment Credits for employer-driven skills-upgrade training at qualifying Kentucky businesses.",
+      "source_note": "Official Kentucky Cabinet for Economic Development BSSC page.",
+      "source_url": "https://newkentuckyhome.ky.gov/Workforce/BSSC",
+      "last_verified": "2026-05-22",
+      "diligence_questions": [
+        "What occupational or skills-upgrade training would be delivered?",
+        "Does the business activity qualify for BSSC incentives?",
+        "Which application deadline or board meeting applies?"
       ]
     },
     {
@@ -154,7 +534,7 @@
       "evidence_summary": "EDA Public Works supports public infrastructure that helps communities attract industry, encourage business expansion, and create or retain long-term jobs.",
       "source_note": "Official Grants.gov listing for EDA Public Works and Economic Adjustment Assistance programs.",
       "source_url": "https://simpler.grants.gov/opportunity/b5365cea-b07c-4e8d-8313-e23ab0fd3766",
-      "last_verified": "2026-05-21",
+      "last_verified": "2026-05-22",
       "diligence_questions": [
         "Is there a public infrastructure gap connected to the project?",
         "Is an eligible public or nonprofit applicant available?",
@@ -174,7 +554,7 @@
       "evidence_summary": "EDA Economic Adjustment Assistance can support strategy and implementation projects, including infrastructure improvements and workforce-related activities, in regions facing economic change.",
       "source_note": "Official Grants.gov listing for EDA Public Works and Economic Adjustment Assistance programs.",
       "source_url": "https://simpler.grants.gov/opportunity/b5365cea-b07c-4e8d-8313-e23ab0fd3766",
-      "last_verified": "2026-05-21",
+      "last_verified": "2026-05-22",
       "diligence_questions": [
         "What adverse economic change or regional need supports the public case?",
         "Is the proposed activity included in a CEDS or equivalent strategy?",

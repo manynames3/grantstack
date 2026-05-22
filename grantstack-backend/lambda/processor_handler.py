@@ -25,6 +25,7 @@ secretsmanager = boto3.client("secretsmanager")
 s3_client = boto3.client("s3")
 
 CATALOG_PATH = Path(__file__).with_name("incentive_catalog.json")
+RULES_PATH = Path(__file__).with_name("eligibility_rules.json")
 STATE_PATTERN = re.compile(r"(?:,\s*|\b)(A[LKSZR]|C[AOT]|D[CE]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOST]|N[CDEHJMVY]|O[HKR]|P[AWR]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])\b", re.IGNORECASE)
 
 
@@ -38,6 +39,10 @@ class RuntimeConfig:
     vector_db_provider: str
     vector_db_endpoint: str
     vector_db_api_key: str
+    vector_db_namespace: str
+    vector_db_top_k: int
+    vector_db_min_score: float
+    vector_db_api_version: str
     embedding_provider: str
     embedding_api_endpoint: str
     embedding_api_key: str
@@ -75,8 +80,9 @@ async def process_record(record: Mapping[str, Any], table: Any, config: RuntimeC
 
     try:
         vector_matches = await query_vector_database(spec, config)
-        llm_payload = build_llm_payload(project_id, spec, vector_matches, config.llm_model)
-        analysis_report = await execute_llm_analysis(llm_payload, spec, vector_matches, config)
+        eligibility_checks = evaluate_eligibility_rules(spec, vector_matches)
+        llm_payload = build_llm_payload(project_id, spec, vector_matches, eligibility_checks, config.llm_model)
+        analysis_report = await execute_llm_analysis(llm_payload, spec, vector_matches, eligibility_checks, config)
         await mark_completed(table, project_id, vector_matches, analysis_report, config)
         logger.info(
             "project_completed project_id=%s source_count=%s external_llm_used=%s",
@@ -208,16 +214,16 @@ async def mark_failed(table: Any, project_id: str, exc: Exception) -> None:
 
 
 async def query_vector_database(spec: Mapping[str, Any], config: RuntimeConfig) -> List[Dict[str, Any]]:
-    local_matches = query_local_incentive_catalog(spec)
+    local_matches = query_local_incentive_catalog(spec, limit=max(8, min(config.vector_db_top_k, 12)))
     if config.mock_external_calls:
         await asyncio.sleep(0)
         return local_matches
 
     external_matches = await query_external_vector_database(spec, config)
-    return merge_matches(local_matches, external_matches)
+    return merge_matches(local_matches, external_matches, limit=max(8, config.vector_db_top_k))
 
 
-def query_local_incentive_catalog(spec: Mapping[str, Any]) -> List[Dict[str, Any]]:
+def query_local_incentive_catalog(spec: Mapping[str, Any], limit: int = 8) -> List[Dict[str, Any]]:
     catalog = load_catalog()
     state_code = infer_state_code(str(spec.get("location", "")))
     scored: List[Dict[str, Any]] = []
@@ -229,7 +235,7 @@ def query_local_incentive_catalog(spec: Mapping[str, Any]) -> List[Dict[str, Any
         scored.append(to_vector_match(source, score, spec, state_code))
 
     scored.sort(key=lambda item: item["score"], reverse=True)
-    return scored[:6]
+    return scored[:limit]
 
 
 async def query_external_vector_database(spec: Mapping[str, Any], config: RuntimeConfig) -> List[Dict[str, Any]]:
@@ -238,38 +244,39 @@ async def query_external_vector_database(spec: Mapping[str, Any], config: Runtim
     if is_unset_secret(config.vector_db_api_key):
         raise ProcessingError("VECTOR_DB_API_KEY is required when MOCK_EXTERNAL_CALLS is false.")
 
-    query_text = (
-        f"Grant incentives for {spec['facility_type']} projects in {spec['location']} "
-        f"with capex {spec['capex']} and {spec['jobs']} jobs."
-    )
+    query_text = build_retrieval_query(spec)
     if config.vector_db_provider == "pinecone":
         embedding = await create_embedding(query_text, config)
+        headers = {
+            "Api-Key": config.vector_db_api_key,
+            "content-type": "application/json",
+        }
+        if config.vector_db_api_version:
+            headers["X-Pinecone-Api-Version"] = config.vector_db_api_version
         response = await post_json(
             pinecone_query_url(config.vector_db_endpoint),
-            {
-                "vector": embedding,
-                "topK": 5,
-                "includeMetadata": True,
-            },
-            headers={
-                "api-key": config.vector_db_api_key,
-                "content-type": "application/json",
-            },
+            build_pinecone_query_payload(embedding, config),
+            headers=headers,
             timeout_seconds=config.http_timeout_seconds,
         )
         matches = response.get("matches", [])
         if not isinstance(matches, list):
             raise ProcessingError("Pinecone response did not include a matches list.")
-        return [normalize_external_match(match) for match in matches if isinstance(match, dict)]
+        return filter_external_matches(
+            [normalize_external_match(match) for match in matches if isinstance(match, dict)],
+            config.vector_db_min_score,
+        )
 
     if config.vector_db_provider != "generic_json":
         raise ProcessingError(f"Unsupported VECTOR_DB_PROVIDER: {config.vector_db_provider}")
 
     request_payload = {
         "query": query_text,
-        "top_k": 5,
+        "top_k": config.vector_db_top_k,
         "include_metadata": True,
     }
+    if config.vector_db_namespace:
+        request_payload["namespace"] = config.vector_db_namespace
     response = await post_json(
         config.vector_db_endpoint,
         request_payload,
@@ -282,7 +289,10 @@ async def query_external_vector_database(spec: Mapping[str, Any], config: Runtim
     matches = response.get("matches", [])
     if not isinstance(matches, list):
         raise ProcessingError("Vector DB response did not include a matches list.")
-    return [normalize_external_match(match) for match in matches if isinstance(match, dict)]
+    return filter_external_matches(
+        [normalize_external_match(match) for match in matches if isinstance(match, dict)],
+        config.vector_db_min_score,
+    )
 
 
 async def create_embedding(query_text: str, config: RuntimeConfig) -> List[float]:
@@ -322,17 +332,47 @@ def pinecone_query_url(endpoint: str) -> str:
     return f"{normalized}/query"
 
 
-def merge_matches(local_matches: Sequence[Dict[str, Any]], external_matches: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def pinecone_upsert_url(endpoint: str) -> str:
+    normalized = endpoint.rstrip("/")
+    if normalized.endswith("/vectors/upsert"):
+        return normalized
+    return f"{normalized}/vectors/upsert"
+
+
+def build_pinecone_query_payload(embedding: Sequence[float], config: RuntimeConfig) -> Dict[str, Any]:
+    payload: Dict[str, Any] = {
+        "vector": list(embedding),
+        "topK": config.vector_db_top_k,
+        "includeMetadata": True,
+        "includeValues": False,
+    }
+    if config.vector_db_namespace:
+        payload["namespace"] = config.vector_db_namespace
+    return payload
+
+
+def filter_external_matches(matches: Sequence[Dict[str, Any]], min_score: float) -> List[Dict[str, Any]]:
+    return [match for match in matches if float(match.get("score", 0)) >= min_score]
+
+
+def merge_matches(
+    local_matches: Sequence[Dict[str, Any]],
+    external_matches: Sequence[Dict[str, Any]],
+    limit: int = 8,
+) -> List[Dict[str, Any]]:
     merged: Dict[str, Dict[str, Any]] = {}
     for match in [*local_matches, *external_matches]:
         match_id = str(match.get("id") or match.get("metadata", {}).get("program_name") or len(merged))
         if match_id not in merged or float(match.get("score", 0)) > float(merged[match_id].get("score", 0)):
             merged[match_id] = match
-    return sorted(merged.values(), key=lambda item: float(item.get("score", 0)), reverse=True)[:8]
+    return sorted(merged.values(), key=lambda item: float(item.get("score", 0)), reverse=True)[:limit]
 
 
 def normalize_external_match(match: Mapping[str, Any]) -> Dict[str, Any]:
     metadata = match.get("metadata") if isinstance(match.get("metadata"), dict) else {}
+    source_url = metadata.get("source_url") or metadata.get("url") or metadata.get("source")
+    if source_url and "source_url" not in metadata:
+        metadata = {**metadata, "source_url": source_url}
     return {
         "id": str(match.get("id") or metadata.get("id") or "external-context"),
         "score": float(match.get("score") or 0.5),
@@ -340,21 +380,49 @@ def normalize_external_match(match: Mapping[str, Any]) -> Dict[str, Any]:
     }
 
 
+def build_retrieval_query(spec: Mapping[str, Any]) -> str:
+    state_code = infer_state_code(str(spec.get("location", "")))
+    parts = [
+        "US economic development incentive eligibility screen",
+        f"location={spec.get('location', '')}",
+        f"state={state_code or 'unknown'}",
+        f"facility_type={spec.get('facility_type', '')}",
+        f"capital_investment_usd={spec.get('capex', '')}",
+        f"new_jobs={spec.get('jobs', '')}",
+    ]
+    optional_fields = {
+        "average_wage": "average_wage_usd",
+        "project_timeline": "timeline",
+        "competing_locations": "competing_locations",
+        "site_control": "site_control",
+        "company_name": "company",
+    }
+    for field_name, label in optional_fields.items():
+        value = str(spec.get(field_name, "")).strip()
+        if value:
+            parts.append(f"{label}={value}")
+    parts.append("prioritize state-specific programs, workforce training, infrastructure support, tax credits, and deal-closing grants")
+    return "\n".join(parts)
+
+
 def build_llm_payload(
     project_id: str,
     spec: Mapping[str, Any],
     vector_matches: List[Mapping[str, Any]],
+    eligibility_checks: Sequence[Mapping[str, Any]],
     model: str,
 ) -> Dict[str, Any]:
     system_prompt = (
         "You are GrantStack's grant strategy analyst. Return concise structured JSON only. "
-        "Use only the supplied retrieved_context for program claims. Every recommended program must include "
-        "a source_url from retrieved_context. Do not invent award amounts, deadlines, or eligibility rules."
+        "Use only the supplied retrieved_context and eligibility_checks for program claims. Every recommended "
+        "program must include a source_url from retrieved_context. Do not invent award amounts, deadlines, or "
+        "eligibility rules. Treat UNKNOWN eligibility checks as diligence gaps, not approvals."
     )
     user_context = {
         "project_id": project_id,
         "project_spec": spec,
         "retrieved_context": vector_matches,
+        "eligibility_checks": eligibility_checks,
         "required_schema": {
             "summary": "string",
             "eligibility_score": "integer 0-100",
@@ -388,9 +456,15 @@ async def execute_llm_analysis(
     llm_payload: Mapping[str, Any],
     spec: Mapping[str, Any],
     vector_matches: List[Mapping[str, Any]],
+    eligibility_checks: Sequence[Mapping[str, Any]],
     config: RuntimeConfig,
 ) -> Dict[str, Any]:
-    deterministic_report = build_source_backed_report(spec, vector_matches, analysis_mode="source_backed")
+    deterministic_report = build_source_backed_report(
+        spec,
+        vector_matches,
+        analysis_mode="source_backed",
+        eligibility_checks=eligibility_checks,
+    )
     if config.mock_external_calls:
         await asyncio.sleep(0)
         return deterministic_report
@@ -474,6 +548,7 @@ def build_source_backed_report(
     spec: Mapping[str, Any],
     vector_matches: Sequence[Mapping[str, Any]],
     analysis_mode: str,
+    eligibility_checks: Optional[Sequence[Mapping[str, Any]]] = None,
 ) -> Dict[str, Any]:
     capex = float(spec["capex"])
     jobs = int(spec["jobs"])
@@ -481,7 +556,9 @@ def build_source_backed_report(
     location = str(spec["location"])
     state_code = infer_state_code(location)
     recommended_programs = [program_recommendation(match) for match in vector_matches[:5]]
-    score = eligibility_score(capex, jobs, vector_matches, state_code)
+    rule_checks = list(eligibility_checks or evaluate_eligibility_rules(spec, vector_matches))
+    rule_summary = summarize_eligibility_checks(rule_checks)
+    score = adjusted_eligibility_score(eligibility_score(capex, jobs, vector_matches, state_code), rule_summary)
     categories = unique_preserve_order(program["category"] for program in recommended_programs)
 
     return {
@@ -504,12 +581,14 @@ def build_source_backed_report(
             "jobs": jobs,
             "jobs_band": jobs_band(jobs),
         },
+        "rule_summary": rule_summary,
+        "eligibility_checks": rule_checks,
         "recommended_program_categories": categories,
         "recommended_programs": recommended_programs,
         "strengths": build_strengths(capex, jobs, facility_type, vector_matches),
-        "risk_flags": build_risk_flags(capex, jobs, state_code, vector_matches),
-        "next_actions": build_next_actions(state_code, recommended_programs),
-        "buyer_questions": build_buyer_questions(state_code),
+        "risk_flags": build_risk_flags(capex, jobs, state_code, vector_matches, rule_summary),
+        "next_actions": build_next_actions(state_code, recommended_programs, rule_summary),
+        "buyer_questions": build_buyer_questions(state_code, rule_summary),
         "evidence_summary": [evidence_line(match) for match in vector_matches[:6]],
         "assumptions": [
             "Project values are treated as preliminary screening inputs, not certified commitments.",
@@ -550,6 +629,191 @@ def evidence_line(match: Mapping[str, Any]) -> Dict[str, Any]:
     }
 
 
+def evaluate_eligibility_rules(
+    spec: Mapping[str, Any],
+    vector_matches: Sequence[Mapping[str, Any]],
+) -> List[Dict[str, Any]]:
+    rules_by_program = load_eligibility_rules().get("rules", {})
+    if not isinstance(rules_by_program, dict):
+        return []
+
+    evaluated: List[Dict[str, Any]] = []
+    seen_programs: Set[str] = set()
+    for match in vector_matches[:8]:
+        metadata = safe_metadata(match)
+        program_id = str(match.get("id") or metadata.get("id") or "").strip()
+        if not program_id or program_id in seen_programs:
+            continue
+        seen_programs.add(program_id)
+
+        program_rules = rules_by_program.get(program_id, [])
+        if not isinstance(program_rules, list) or not program_rules:
+            continue
+
+        checks = [evaluate_single_rule(spec, rule) for rule in program_rules if isinstance(rule, dict)]
+        evaluated.append(
+            {
+                "program_id": program_id,
+                "program_name": metadata.get("program_name", program_id),
+                "jurisdiction": metadata.get("jurisdiction", "Unspecified"),
+                "source_url": metadata.get("source_url", ""),
+                "checks": checks,
+                "summary": summarize_checks(checks),
+            }
+        )
+
+    return evaluated
+
+
+def evaluate_single_rule(spec: Mapping[str, Any], rule: Mapping[str, Any]) -> Dict[str, Any]:
+    field_name = str(rule.get("field", "")).strip()
+    operator = str(rule.get("operator", "")).strip()
+    expected = rule.get("value")
+    actual = rule_value(spec, field_name)
+    missing = value_is_missing(actual)
+
+    status = "UNKNOWN"
+    if operator == "present":
+        status = "PASS" if not missing else str(rule.get("missing_status", "UNKNOWN"))
+    elif operator == "gte":
+        actual_number = number_or_none(actual)
+        expected_number = number_or_none(expected)
+        if actual_number is None or expected_number is None:
+            status = str(rule.get("missing_status", "UNKNOWN"))
+        else:
+            status = "PASS" if actual_number >= expected_number else "FAIL"
+    elif operator == "lte":
+        actual_number = number_or_none(actual)
+        expected_number = number_or_none(expected)
+        if actual_number is None or expected_number is None:
+            status = str(rule.get("missing_status", "UNKNOWN"))
+        else:
+            status = "PASS" if actual_number <= expected_number else "FAIL"
+    elif operator == "state_in":
+        state_code = infer_state_code(str(spec.get("location", "")))
+        if not state_code:
+            status = str(rule.get("missing_status", "UNKNOWN"))
+        else:
+            status = "PASS" if state_code in {str(value).upper() for value in expected or []} else "FAIL"
+        actual = state_code
+    elif operator == "contains_any":
+        expected_terms = {str(value) for value in expected or []}
+        if missing:
+            status = str(rule.get("missing_status", "UNKNOWN"))
+        else:
+            status = "PASS" if keyword_overlap(str(actual), expected_terms) else "FAIL"
+    else:
+        status = "UNKNOWN"
+
+    if status not in {"PASS", "FAIL", "UNKNOWN"}:
+        status = "UNKNOWN"
+
+    return {
+        "rule_id": rule.get("id", field_name or "rule"),
+        "label": rule.get("label", field_name or "Eligibility rule"),
+        "field": field_name,
+        "operator": operator,
+        "expected": expected,
+        "actual": actual,
+        "status": status,
+        "severity": rule.get("severity", "material"),
+        "message": rule_message(rule, status),
+        "source_url": rule.get("source_url", ""),
+    }
+
+
+def summarize_eligibility_checks(program_checks: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
+    summary = {
+        "programs_checked": len(program_checks),
+        "passed_checks": 0,
+        "failed_checks": 0,
+        "unknown_checks": 0,
+        "blocking_failures": 0,
+        "material_unknowns": 0,
+        "review_status": "No jurisdiction-specific rules matched retrieved programs",
+    }
+    for program in program_checks:
+        for check in program.get("checks", []):
+            if not isinstance(check, Mapping):
+                continue
+            status = check.get("status")
+            severity = check.get("severity")
+            if status == "PASS":
+                summary["passed_checks"] += 1
+            elif status == "FAIL":
+                summary["failed_checks"] += 1
+                if severity == "blocking":
+                    summary["blocking_failures"] += 1
+            elif status == "UNKNOWN":
+                summary["unknown_checks"] += 1
+                if severity in {"blocking", "material"}:
+                    summary["material_unknowns"] += 1
+
+    if summary["blocking_failures"]:
+        summary["review_status"] = "Potentially ineligible for at least one retrieved program"
+    elif summary["unknown_checks"]:
+        summary["review_status"] = "Needs missing facts before advisory use"
+    elif summary["programs_checked"]:
+        summary["review_status"] = "No first-pass rule failures found"
+    return summary
+
+
+def summarize_checks(checks: Sequence[Mapping[str, Any]]) -> Dict[str, int]:
+    return {
+        "passed": sum(1 for check in checks if check.get("status") == "PASS"),
+        "failed": sum(1 for check in checks if check.get("status") == "FAIL"),
+        "unknown": sum(1 for check in checks if check.get("status") == "UNKNOWN"),
+    }
+
+
+def adjusted_eligibility_score(base_score: int, rule_summary: Mapping[str, Any]) -> int:
+    penalty = 0
+    penalty += min(24, int(rule_summary.get("blocking_failures", 0)) * 12)
+    penalty += min(12, max(0, int(rule_summary.get("failed_checks", 0)) - int(rule_summary.get("blocking_failures", 0))) * 4)
+    penalty += min(8, int(rule_summary.get("material_unknowns", 0)) * 2)
+    return max(0, min(100, base_score - penalty))
+
+
+def rule_value(spec: Mapping[str, Any], field_name: str) -> Any:
+    if field_name == "state":
+        return infer_state_code(str(spec.get("location", "")))
+    if "." in field_name:
+        current: Any = spec
+        for part in field_name.split("."):
+            if not isinstance(current, Mapping):
+                return None
+            current = current.get(part)
+        return current
+    return spec.get(field_name)
+
+
+def value_is_missing(value: Any) -> bool:
+    if value is None:
+        return True
+    if isinstance(value, str):
+        return not value.strip()
+    return False
+
+
+def number_or_none(value: Any) -> Optional[float]:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def rule_message(rule: Mapping[str, Any], status: str) -> str:
+    field_name = {
+        "PASS": "pass_message",
+        "FAIL": "fail_message",
+        "UNKNOWN": "unknown_message",
+    }[status]
+    message = rule.get(field_name)
+    if isinstance(message, str) and message.strip():
+        return message
+    return "Rule passed." if status == "PASS" else "Rule needs human validation."
+
+
 def build_strengths(
     capex: float,
     jobs: int,
@@ -573,6 +837,7 @@ def build_risk_flags(
     jobs: int,
     state_code: Optional[str],
     vector_matches: Sequence[Mapping[str, Any]],
+    rule_summary: Optional[Mapping[str, Any]] = None,
 ) -> List[str]:
     risks: List[str] = []
     if not state_code:
@@ -583,15 +848,26 @@ def build_risk_flags(
         risks.append("Lower capital investment may reduce leverage for discretionary programs unless strategic public benefits are clear.")
     if not any(safe_metadata(match).get("source_url") for match in vector_matches):
         risks.append("No source URLs were attached to retrieved context; human validation is required before buyer-facing use.")
+    if rule_summary:
+        if int(rule_summary.get("blocking_failures", 0)) > 0:
+            risks.append("At least one retrieved program has a blocking first-pass eligibility failure.")
+        if int(rule_summary.get("unknown_checks", 0)) > 0:
+            risks.append("Some jurisdiction-specific rule checks are unknown because project facts are missing or agency discretion is required.")
     risks.append("Wage levels, county tier, site control, competing locations, and project timing can materially change award fit.")
     return risks
 
 
-def build_next_actions(state_code: Optional[str], programs: Sequence[Mapping[str, Any]]) -> List[str]:
+def build_next_actions(
+    state_code: Optional[str],
+    programs: Sequence[Mapping[str, Any]],
+    rule_summary: Optional[Mapping[str, Any]] = None,
+) -> List[str]:
     actions = [
         "Confirm exact site address, county, wage bands, hiring schedule, and whether roles are net-new.",
         "Build a one-page economic impact narrative covering capex, jobs, wages, training needs, and public benefit.",
     ]
+    if rule_summary and int(rule_summary.get("unknown_checks", 0)) > 0:
+        actions.append("Resolve unknown eligibility checks before using this report for advisory recommendations or application decisions.")
     if state_code:
         actions.append(f"Validate {state_code} program fit with the state economic development agency and local development authority.")
     if programs:
@@ -600,13 +876,15 @@ def build_next_actions(state_code: Optional[str], programs: Sequence[Mapping[str
     return actions
 
 
-def build_buyer_questions(state_code: Optional[str]) -> List[str]:
+def build_buyer_questions(state_code: Optional[str], rule_summary: Optional[Mapping[str, Any]] = None) -> List[str]:
     questions = [
         "Is this project competitive with another state or site?",
         "What wage level and benefits package will be committed in writing?",
         "What is the latest date by which incentives must influence the location decision?",
         "Which infrastructure, training, permitting, or utility constraints could public partners help remove?",
     ]
+    if rule_summary and int(rule_summary.get("blocking_failures", 0)) > 0:
+        questions.append("Can the project scope be changed enough to clear the failed first-pass eligibility thresholds?")
     if state_code == "GA":
         questions.append("Which Georgia county tier or special zone applies to the site?")
     if state_code == "NC":
@@ -632,6 +910,8 @@ def merge_report_defaults(base_report: Dict[str, Any], llm_report: Mapping[str, 
     merged["analysis_mode"] = "llm_augmented_source_backed"
     merged["validation_note"] = base_report["validation_note"]
     merged["evidence_summary"] = base_report["evidence_summary"]
+    merged["rule_summary"] = base_report.get("rule_summary", {})
+    merged["eligibility_checks"] = base_report.get("eligibility_checks", [])
     merged["assumptions"] = base_report["assumptions"]
     return merged
 
@@ -937,6 +1217,22 @@ def load_catalog() -> Dict[str, Any]:
 
 
 @lru_cache(maxsize=1)
+def load_eligibility_rules() -> Dict[str, Any]:
+    try:
+        with RULES_PATH.open("r", encoding="utf-8") as handle:
+            rules = json.load(handle)
+    except FileNotFoundError:
+        logger.warning("eligibility_rules_file_missing path=%s", RULES_PATH)
+        return {"version": "missing", "rules": {}}
+    except json.JSONDecodeError as exc:
+        raise ProcessingError("Eligibility rules file is not valid JSON.") from exc
+
+    if not isinstance(rules, dict) or not isinstance(rules.get("rules"), dict):
+        raise ProcessingError("Eligibility rules must contain a rules object.")
+    return rules
+
+
+@lru_cache(maxsize=1)
 def state_names() -> Dict[str, str]:
     return {
         "alabama": "AL",
@@ -1003,6 +1299,10 @@ def load_config() -> RuntimeConfig:
         vector_db_api_key=(
             "" if mock_external_calls else resolve_api_key("VECTOR_DB_API_KEY", "VECTOR_DB_API_KEY_SECRET_ARN")
         ),
+        vector_db_namespace=os.environ.get("VECTOR_DB_NAMESPACE", "").strip(),
+        vector_db_top_k=int(os.environ.get("VECTOR_DB_TOP_K", "8")),
+        vector_db_min_score=float(os.environ.get("VECTOR_DB_MIN_SCORE", "0.2")),
+        vector_db_api_version=os.environ.get("VECTOR_DB_API_VERSION", "").strip(),
         embedding_provider=os.environ.get("EMBEDDING_PROVIDER", "openai"),
         embedding_api_endpoint=optional_env("EMBEDDING_API_ENDPOINT"),
         embedding_api_key=(

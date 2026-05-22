@@ -8,10 +8,11 @@ GrantStack uses a fully asynchronous, decoupled serverless workflow designed for
 2. API Gateway invokes the Ingestion Lambda through a Lambda proxy integration.
 3. The Ingestion Lambda validates the payload, generates a `project_id` and private `access_token`, writes an accepted project record, sends the work item to SQS, and returns `202 Accepted` immediately.
 4. SQS invokes the Processing Lambda asynchronously with `batch_size = 1`.
-5. The Processing Lambda marks the project as `PROCESSING`, retrieves source-backed incentive context from the active S3 catalog and optional external vector source, assembles an LLM-ready prompt, writes the final cited report to DynamoDB, and sets status to `COMPLETED`.
+5. The Processing Lambda marks the project as `PROCESSING`, retrieves source-backed incentive context from the active S3 catalog and optional external vector source, evaluates jurisdiction-specific eligibility rules, assembles an LLM-ready prompt, writes the final cited report to DynamoDB, and sets status to `COMPLETED`.
 6. The Report Lambda serves `GET /projects/{project_id}?token=...` for private report links.
 7. Failures are retried by SQS. Poison messages move to the DLQ after the configured receive count.
 8. A scheduled Source Refresh Lambda verifies official source URLs, records retrieval status and content hashes, and writes the active catalog to S3.
+9. The frontend posts privacy-light product events to `POST /analytics`; the Analytics Lambda validates and stores them in a separate on-demand DynamoDB table with TTL.
 
 ```mermaid
 flowchart LR
@@ -26,6 +27,9 @@ flowchart LR
   Processor --> Ddb["DynamoDB On-Demand\nProject reports and status"]
   Api --> Report["Report Lambda\nprivate token link"]
   Report --> Ddb
+  Client --> AnalyticsApi["POST /analytics"]
+  AnalyticsApi --> Analytics["Analytics Lambda\n128 MB, short timeout"]
+  Analytics --> AnalyticsDdb["DynamoDB On-Demand\nUsage events with TTL"]
   Queue --> Dlq["SQS Dead Letter Queue"]
 ```
 
@@ -35,6 +39,7 @@ flowchart LR
 - Lambda uses no provisioned concurrency and is not attached to a VPC, avoiding NAT gateway idle cost.
 - SQS charges per request and stores messages only while work exists.
 - DynamoDB uses `PAY_PER_REQUEST`; there is no provisioned read/write capacity.
+- The analytics table also uses `PAY_PER_REQUEST` and TTL, preserving the same zero-idle compute posture for product telemetry.
 - CloudWatch log groups use explicit retention.
 - API Gateway throttling reduces accidental or abusive request bursts.
 - DynamoDB TTL can expire pilot project records through `expires_at`.
@@ -109,6 +114,14 @@ Successful response:
 
 `GET /projects/{project_id}?token={access_token}` returns the private status/report view. Missing tokens return `401`; invalid tokens return `403`.
 
+`POST /analytics` records basic first-party events from the frontend:
+
+- `event_name`: lowercase event name such as `page_view`, `cta_click`, `form_submit_success`, or `report_download_json`.
+- `page_path`, `page_title`, `referrer`, and `session_id`: optional bounded strings.
+- `properties`: bounded JSON object for low-cardinality product context.
+
+Analytics is intentionally not part of the project-advice record. It is used for activation, conversion, and product-quality signals.
+
 ## DynamoDB Data Model
 
 Table key:
@@ -129,11 +142,24 @@ Core attributes:
 
 The processor is idempotent at the project level because all writes target the same `project_id`.
 
+Analytics table key:
+
+- Partition key: `event_id` string.
+
+Core analytics attributes:
+
+- `event_name`: validated frontend event name.
+- `page_path`, `page_title`, `referrer`, `session_id`: bounded context fields.
+- `properties`: sanitized bounded JSON object.
+- `received_at`: ISO-8601 ingestion timestamp.
+- `expires_at`: DynamoDB TTL epoch value.
+
 ## Security Model
 
 - Ingestion Lambda can only write to the processing SQS queue, create/update project records, and write its own CloudWatch logs.
 - Processing Lambda can only poll/delete from the processing SQS queue, write to the DynamoDB projects table, and write its own CloudWatch logs.
 - Report Lambda can only read project records and write its own CloudWatch logs.
+- Analytics Lambda can only put items into the analytics DynamoDB table and write its own CloudWatch logs.
 - Source Refresh Lambda can only read/write the configured S3 catalog object and write its own CloudWatch logs.
 - Lambdas can write X-Ray traces only when `enable_xray_tracing = true`.
 - SQS queues use AWS-managed server-side encryption.
@@ -148,19 +174,38 @@ The processor is idempotent at the project level because all writes target the s
 GrantStack supports two processor modes:
 
 - `mock_external_calls = true`: deterministic source-backed report generation. This is the deployed dev cost-control mode and requires no paid vector or LLM provider.
-- `mock_external_calls = false`: production provider mode. The processor builds an OpenAI embedding, queries Pinecone Serverless or a compatible JSON vector endpoint, then calls OpenAI, Anthropic, or a generic JSON LLM endpoint.
+- `mock_external_calls = false`: production provider mode. The processor builds an OpenAI-compatible embedding, queries Pinecone Serverless or a compatible JSON vector endpoint, evaluates eligibility rules against the retrieved programs, then calls OpenAI, Anthropic, or a generic JSON LLM endpoint.
 
 The deterministic report remains the guardrail in provider mode. External LLM output is merged into the source-backed baseline, and recommended programs must preserve source URLs from retrieved context.
+
+The embedded corpus includes curated industrial incentive sources for GA, NC, SC, TN, TX, OH, IN, AL, KY, and federal EDA programs. Each supported program can have explicit rules in `lambda/eligibility_rules.json`. Rule results are stored in `analysis_report.rule_summary` and `analysis_report.eligibility_checks` so a report can show pass/fail/unknown checks before any paid advisory use.
 
 Provider variables:
 
 - `vector_db_provider`: `pinecone` or `generic_json`.
 - `vector_db_endpoint` and `vector_db_api_key_secret_arn`.
+- `vector_db_namespace`, `vector_db_top_k`, `vector_db_min_score`, and optional `vector_db_api_version`.
 - `embedding_provider = "openai"`, `embedding_api_endpoint`, `embedding_api_key_secret_arn`, and `embedding_model`.
 - `llm_provider`: `openai`, `anthropic`, or `generic_json`.
 - `llm_api_endpoint`, `llm_api_key_secret_arn`, and `llm_model`.
 
 Secrets Manager values may be raw strings or JSON objects containing `api_key`, `token`, `value`, or `secret`.
+
+### Vector Index Sync
+
+The curated corpus is embedded and upserted separately from Terraform so provider activation does not require baking secrets into infrastructure code:
+
+```bash
+grantstack-backend/scripts/sync_vector_index.py --dry-run
+
+OPENAI_API_KEY="..." \
+PINECONE_API_KEY="..." \
+PINECONE_INDEX_HOST="https://your-index-host.svc.aped-4627-b74a.pinecone.io" \
+PINECONE_NAMESPACE="grantstack-incentives-staging" \
+grantstack-backend/scripts/sync_vector_index.py
+```
+
+The script reads `lambda/incentive_catalog.json` and `lambda/eligibility_rules.json`, creates one retrieval document per program, calls the OpenAI embeddings endpoint, and upserts vectors with metadata to the configured Pinecone namespace. The Lambda provider path queries the same namespace through `VECTOR_DB_NAMESPACE`.
 
 ## Source Refresh Pipeline
 
@@ -180,11 +225,11 @@ The stack includes a production baseline without always-on compute:
 - Active X-Ray tracing on all Lambdas when `enable_xray_tracing = true`.
 - Structured API Gateway access logs controlled by `enable_api_access_logs`.
 - CloudWatch dashboard controlled by `enable_cloudwatch_dashboard`; output `cloudwatch_dashboard_name`.
-- Lambda error alarms for ingestion, processor, report, and source refresh.
+- Lambda error alarms for ingestion, processor, report, analytics, and source refresh.
 - Processor failure metric filter for `project_processing_failed` log lines.
 - SQS queue-age alarm and DLQ visible-message alarm.
 
-Dashboard widgets cover API traffic/errors/latency, Lambda errors and p95 duration, SQS/DLQ health, DynamoDB on-demand activity, and source refresh health.
+Dashboard widgets cover API traffic/errors/latency, Lambda errors and p95 duration, SQS/DLQ health, project and analytics DynamoDB on-demand activity, and source refresh health.
 
 ## Failure Handling
 

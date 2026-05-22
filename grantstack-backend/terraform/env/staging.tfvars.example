@@ -25,9 +25,14 @@ embedding_model              = "text-embedding-3-small"
 vector_db_provider           = "pinecone"
 vector_db_endpoint           = "https://your-staging-index.svc.aped-4627-b74a.pinecone.io"
 vector_db_api_key_secret_arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:grantstack/staging/pinecone"
+vector_db_namespace          = "grantstack-incentives-staging"
+vector_db_top_k              = 10
+vector_db_min_score          = 0.2
+vector_db_api_version        = ""
 http_client_timeout_seconds  = 30
 
 project_ttl_days         = 30
+analytics_ttl_days       = 90
 api_throttle_burst_limit = 30
 api_throttle_rate_limit  = 15
 

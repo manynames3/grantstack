@@ -4,9 +4,10 @@ AI grant intelligence for companies planning capex-heavy facility expansions.
 
 GrantStack turns a rough expansion plan into a cited first-pass incentive strategy: which grant, tax credit, workforce, infrastructure, and economic-development programs are worth pursuing, what risks could kill eligibility, and what the team should validate next.
 
-**Live demo:** https://grantstack.pages.dev  
-**Repository:** https://github.com/manynames3/grantstack  
-**Backend API:** https://rx967db2q9.execute-api.us-east-1.amazonaws.com/projects
+**Live demo:** https://grantstack.pages.dev<br>
+**Repository:** https://github.com/manynames3/grantstack<br>
+**Backend API:** https://rx967db2q9.execute-api.us-east-1.amazonaws.com/projects<br>
+**Sample report:** https://grantstack.pages.dev/report?sample=true
 
 ## The Problem
 
@@ -66,6 +67,7 @@ The deployed demo is an end-to-end product flow:
 5. Processor Lambda screens the project against the active source catalog and optional LLM/vector provider path.
 6. DynamoDB stores the completed structured report.
 7. The report page polls the private tokenized endpoint and renders the result.
+8. First-party analytics events are posted to `/analytics` for page views, CTA clicks, sample-report views, submission outcomes, and report actions.
 
 ```mermaid
 flowchart LR
@@ -80,6 +82,8 @@ flowchart LR
   Processor --> DDB["DynamoDB On-Demand"]
   Site --> Report["Private Report Page"]
   Report --> Api
+  Site --> Analytics["Analytics Lambda"]
+  Analytics --> AnalyticsDDB["DynamoDB On-Demand Analytics"]
 ```
 
 ## Why This Is Not Just A Prompt Demo
@@ -91,10 +95,12 @@ GrantStack is intentionally built as a production-style event-driven system:
 - **Failure isolation:** DLQ, retry semantics, partial batch failure handling, and replay runbook.
 - **Private report access:** generated report links use per-project access tokens.
 - **Source-backed output:** recommendations include source URLs and diligence questions.
+- **Jurisdiction-specific rules:** retrieved programs are checked against explicit first-pass eligibility rules so missing facts and threshold failures are visible.
 - **Refresh pipeline:** scheduled source refresh Lambda verifies official URLs and stores catalog metadata in S3.
 - **Environment split:** separate Terraform backend configs and tfvars examples for dev, staging, and prod.
 - **Observability:** X-Ray tracing, API access logs, CloudWatch dashboard, alarms, and log metric filters.
-- **Provider-ready AI path:** deterministic dev mode plus OpenAI/Anthropic, OpenAI embeddings, and Pinecone Serverless hooks for staging/prod.
+- **Basic product analytics:** first-party event capture for activation and report-action signals without cookies or an always-on service.
+- **Provider-ready AI path:** deterministic dev mode plus a larger multi-state source corpus, OpenAI-compatible embeddings, Pinecone Serverless retrieval, and OpenAI/Anthropic hooks for staging/prod.
 - **CI:** GitHub Actions validates Terraform and Python handlers on every push.
 
 ## Architecture Highlights
@@ -102,7 +108,7 @@ GrantStack is intentionally built as a production-style event-driven system:
 Backend:
 
 - Amazon API Gateway HTTP API
-- AWS Lambda for ingestion, processing, reporting, and source refresh
+- AWS Lambda for ingestion, processing, reporting, analytics, and source refresh
 - Amazon SQS with DLQ
 - Amazon DynamoDB `PAY_PER_REQUEST`
 - Amazon S3 for active source catalog and Terraform remote state
@@ -113,13 +119,14 @@ Backend:
 Frontend:
 
 - Static Cloudflare Pages site
-- Product landing page, intake form, report page, privacy, and terms
+- Product landing page, sample report path, intake form, report page, privacy, and terms
 - No always-on application server
 
 AI/retrieval modes:
 
 - Dev: deterministic source-backed evidence engine for predictable cost.
 - Staging/prod: configurable LLM and vector path using Secrets Manager ARNs, OpenAI-compatible embeddings, Pinecone Serverless, OpenAI, Anthropic, or generic JSON providers.
+- Corpus: curated state/federal incentive sources currently cover GA, NC, SC, TN, TX, OH, IN, AL, KY, and federal EDA programs, with explicit eligibility-rule checks attached to supported programs.
 
 ## Current Product Readiness
 
@@ -129,18 +136,21 @@ What is live:
 
 - Public landing page
 - Project intake
+- Sample/demo report path
 - API Gateway/Lambda/SQS/DynamoDB backend
 - Private tokenized report endpoint
 - Cited incentive-screening report generation
+- First-party activation analytics
 - Source refresh job
 - CloudWatch/X-Ray operations baseline
 - Terraform IaC with remote backend support
 - CI workflow
+- Advisory disclaimers and a human-review workflow boundary for paid use
 
 Known limits:
 
 - The deployed dev environment uses `mock_external_calls = true`, so reports use the deterministic source-backed engine rather than paid external LLM/vector calls.
-- The source catalog is intentionally narrow and should be expanded before positioning this as a national incentive platform.
+- The source catalog is expanded for an industrial pilot, but it is not a national incentive database and should not be sold as exhaustive coverage.
 - Authentication, billing, saved customer workspaces, and email delivery are not implemented yet.
 - Reports are first-pass decision-support memos and still require human validation before being used for legal, tax, accounting, or public-agency commitments.
 
@@ -158,9 +168,11 @@ This repo is designed to show practical full-stack cloud engineering judgment:
 ## Live Surfaces
 
 - Landing page: https://grantstack.pages.dev
+- Sample report: https://grantstack.pages.dev/report?sample=true
 - API index: https://rx967db2q9.execute-api.us-east-1.amazonaws.com/projects
 - Submit endpoint: `POST https://rx967db2q9.execute-api.us-east-1.amazonaws.com/projects`
 - Private report endpoint: `GET /projects/{project_id}?token={access_token}`
+- Analytics endpoint: `POST https://rx967db2q9.execute-api.us-east-1.amazonaws.com/analytics`
 
 ## Repository Layout
 
@@ -211,12 +223,39 @@ terraform plan -var-file=env/prod.tfvars
 ## Validate
 
 ```sh
-python3 -m py_compile grantstack-backend/lambda/ingest_handler.py grantstack-backend/lambda/processor_handler.py grantstack-backend/lambda/report_handler.py grantstack-backend/lambda/source_refresh_handler.py
+python3 -m py_compile grantstack-backend/lambda/ingest_handler.py grantstack-backend/lambda/processor_handler.py grantstack-backend/lambda/report_handler.py grantstack-backend/lambda/source_refresh_handler.py grantstack-backend/lambda/analytics_handler.py
+python3 -m py_compile grantstack-backend/scripts/sync_vector_index.py
 python3 -m unittest discover -s grantstack-backend/tests
 terraform -chdir=grantstack-backend/terraform fmt -check -recursive
 terraform -chdir=grantstack-backend/terraform validate
+grantstack-backend/scripts/sync_vector_index.py --dry-run --limit 3
 grantstack-backend/scripts/smoke_test.py --timeout 180 --interval 5
 ```
+
+## Provider Mode Corpus And Vector Index
+
+Provider mode requires external credentials and an indexed corpus; the deployed dev stack intentionally does not spend money on this path.
+
+Dry-run the index payload locally:
+
+```sh
+grantstack-backend/scripts/sync_vector_index.py --dry-run
+```
+
+Upsert the curated source corpus to Pinecone:
+
+```sh
+export OPENAI_API_KEY="..."
+export PINECONE_API_KEY="..."
+export PINECONE_INDEX_HOST="https://your-index-host.svc.aped-4627-b74a.pinecone.io"
+export PINECONE_NAMESPACE="grantstack-incentives-staging"
+
+grantstack-backend/scripts/sync_vector_index.py
+```
+
+Then set `mock_external_calls = false` in staging/prod tfvars, configure the OpenAI and Pinecone Secrets Manager ARNs, and use matching values for `vector_db_endpoint`, `vector_db_namespace`, `vector_db_top_k`, and `vector_db_min_score`.
+
+Eligibility rules live in `grantstack-backend/lambda/eligibility_rules.json`. They are intentionally conservative: failed checks and unknown facts lower confidence and appear in the report instead of being hidden behind LLM prose.
 
 ## API Contract
 
@@ -248,6 +287,21 @@ Successful response:
 
 The `access_token` is required to read the private report. A missing token returns `401`; an invalid token returns `403`.
 
+Record a basic product analytics event:
+
+```json
+{
+  "event_name": "cta_click",
+  "page_path": "/",
+  "session_id": "anonymous-session-id",
+  "properties": {
+    "label": "hero_sample_report"
+  }
+}
+```
+
+Analytics events are stored in an on-demand DynamoDB table with TTL. They are intended for activation and product-quality signals, not user profiling.
+
 ## Cost Posture
 
 The infrastructure is designed for near-zero idle cost:
@@ -257,14 +311,14 @@ The infrastructure is designed for near-zero idle cost:
 - Lambda charges only during execution.
 - SQS charges by request.
 - DynamoDB uses `PAY_PER_REQUEST`.
-- DynamoDB TTL is enabled on `expires_at` so pilot data can age out automatically.
+- DynamoDB TTL is enabled on `expires_at` so pilot project and analytics data can age out automatically.
 - CloudWatch Logs, dashboards, alarms, X-Ray traces, S3 catalog storage, and remote Terraform state may create small charges as usage grows.
 - Cloudflare Pages static hosting has no always-on application server.
 
 ## Next Product Steps
 
-- Expand the source catalog across more states and federal programs.
 - Add customer auth, saved reports, and payment gating.
 - Add email delivery when a report completes.
-- Add activation/conversion analytics.
+- Add an internal analytics dashboard or export path for funnel review.
 - Add a human-review queue for paid advisory workflows.
+- Add automated source ingestion beyond the curated corpus, including diff review before new rules become buyer-facing.

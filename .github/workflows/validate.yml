@@ -39,7 +39,7 @@ jobs:
           python-version: "3.12"
 
       - name: Compile Lambda handlers
-        run: python -m py_compile grantstack-backend/lambda/ingest_handler.py grantstack-backend/lambda/processor_handler.py grantstack-backend/lambda/report_handler.py grantstack-backend/lambda/source_refresh_handler.py
+        run: python -m py_compile grantstack-backend/lambda/ingest_handler.py grantstack-backend/lambda/processor_handler.py grantstack-backend/lambda/report_handler.py grantstack-backend/lambda/source_refresh_handler.py grantstack-backend/lambda/analytics_handler.py grantstack-backend/scripts/sync_vector_index.py
 
       - name: Install Python test dependencies
         run: python -m pip install boto3

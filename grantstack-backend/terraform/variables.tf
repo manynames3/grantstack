@@ -99,6 +99,12 @@ variable "dynamodb_table_name" {
   default     = null
 }
 
+variable "analytics_table_name" {
+  description = "Optional DynamoDB analytics table name override. Leave null for generated naming."
+  type        = string
+  default     = null
+}
+
 variable "project_ttl_days" {
   description = "Number of days to retain project records before DynamoDB TTL can expire them. Set to 0 to disable app-level expiration values."
   type        = number
@@ -107,6 +113,17 @@ variable "project_ttl_days" {
   validation {
     condition     = var.project_ttl_days >= 0 && var.project_ttl_days <= 365
     error_message = "project_ttl_days must be between 0 and 365."
+  }
+}
+
+variable "analytics_ttl_days" {
+  description = "Number of days to retain basic web analytics events before DynamoDB TTL can expire them. Set to 0 to disable app-level expiration values."
+  type        = number
+  default     = 90
+
+  validation {
+    condition     = var.analytics_ttl_days >= 0 && var.analytics_ttl_days <= 365
+    error_message = "analytics_ttl_days must be between 0 and 365."
   }
 }
 
@@ -190,6 +207,40 @@ variable "vector_db_api_key_secret_arn" {
   description = "Secrets Manager ARN containing the vector database API key. Required when mock_external_calls is false and no direct env override is used."
   type        = string
   default     = null
+}
+
+variable "vector_db_namespace" {
+  description = "Optional vector namespace for GrantStack source-corpus records."
+  type        = string
+  default     = "grantstack-incentives"
+}
+
+variable "vector_db_top_k" {
+  description = "Number of vector matches to request from the external vector database."
+  type        = number
+  default     = 8
+
+  validation {
+    condition     = var.vector_db_top_k >= 1 && var.vector_db_top_k <= 25
+    error_message = "vector_db_top_k must be between 1 and 25."
+  }
+}
+
+variable "vector_db_min_score" {
+  description = "Minimum external vector match score to keep before merging with the deterministic source catalog."
+  type        = number
+  default     = 0.2
+
+  validation {
+    condition     = var.vector_db_min_score >= 0 && var.vector_db_min_score <= 1
+    error_message = "vector_db_min_score must be between 0 and 1."
+  }
+}
+
+variable "vector_db_api_version" {
+  description = "Optional version header for vector providers that require one, such as Pinecone API version headers."
+  type        = string
+  default     = ""
 }
 
 variable "embedding_provider" {

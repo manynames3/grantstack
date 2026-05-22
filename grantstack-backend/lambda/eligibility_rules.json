@@ -1,0 +1,764 @@
+{
+  "version": "2026-05-22",
+  "notes": "First-pass screening rules only. These checks identify obvious fit, failures, and missing diligence facts; issuing agencies and qualified advisors remain authoritative.",
+  "rules": {
+    "ga-job-and-quality-jobs-tax-credits": [
+      {
+        "id": "ga-state",
+        "label": "Georgia project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["GA"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Georgia.",
+        "fail_message": "Georgia job tax credits require a Georgia project location.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://dor.georgia.gov/tax-credit-summaries"
+      },
+      {
+        "id": "ga-jobs-threshold",
+        "label": "Job creation threshold",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 25,
+        "severity": "material",
+        "pass_message": "Job creation clears the catalog screening threshold.",
+        "fail_message": "Job creation may be too low for this Georgia credit screen.",
+        "unknown_message": "Job creation count is missing.",
+        "source_url": "https://dor.georgia.gov/tax-credit-summaries"
+      },
+      {
+        "id": "ga-county-tier",
+        "label": "County tier or zone",
+        "field": "metadata.county_tier",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "County tier or zone was provided for Georgia diligence.",
+        "unknown_message": "County tier or special-zone status must be confirmed before estimating credit value.",
+        "source_url": "https://dor.georgia.gov/tax-credit-summaries"
+      }
+    ],
+    "ga-quick-start": [
+      {
+        "id": "ga-quick-start-state",
+        "label": "Georgia training location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["GA"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Georgia.",
+        "fail_message": "Georgia Quick Start applies to Georgia projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.georgiaquickstart.org/about-us/"
+      },
+      {
+        "id": "ga-quick-start-training-need",
+        "label": "Training need",
+        "field": "metadata.training_plan",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Training plan context was provided.",
+        "unknown_message": "Training roles, skills, and hiring waves must be defined with Quick Start.",
+        "source_url": "https://www.georgiaquickstart.org/about-us/"
+      }
+    ],
+    "ga-reba-onegeorgia-local-support": [
+      {
+        "id": "ga-reba-jobs",
+        "label": "Material job creation",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 50,
+        "severity": "material",
+        "pass_message": "Job creation is material enough for discretionary-review diligence.",
+        "fail_message": "Low job creation may weaken fit for Georgia discretionary project finance.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://dca.georgia.gov/community-assistance/community-development/regional-economic-business-assistance-reba"
+      },
+      {
+        "id": "ga-reba-local-support",
+        "label": "Local support or match",
+        "field": "metadata.local_support",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Local support context was provided.",
+        "unknown_message": "Local participation and public infrastructure need should be confirmed.",
+        "source_url": "https://dca.georgia.gov/community-assistance/community-development/regional-economic-business-assistance-reba"
+      }
+    ],
+    "nc-jdig": [
+      {
+        "id": "nc-jdig-state",
+        "label": "North Carolina project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["NC"],
+        "severity": "blocking",
+        "pass_message": "Project location is in North Carolina.",
+        "fail_message": "JDIG applies to North Carolina projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/job-development-investment-grant-jdig"
+      },
+      {
+        "id": "nc-jdig-jobs",
+        "label": "Competitive job creation",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 50,
+        "severity": "material",
+        "pass_message": "Job creation clears the GrantStack JDIG screening threshold.",
+        "fail_message": "Job creation may be too low for JDIG unless special project facts apply.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/job-development-investment-grant-jdig"
+      },
+      {
+        "id": "nc-jdig-competition",
+        "label": "Competitive location decision",
+        "field": "competing_locations",
+        "operator": "present",
+        "severity": "blocking",
+        "pass_message": "Competing-location context was provided.",
+        "unknown_message": "JDIG diligence should confirm whether incentives are needed to influence a competitive location decision.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/job-development-investment-grant-jdig"
+      },
+      {
+        "id": "nc-jdig-wage",
+        "label": "Average wage context",
+        "field": "average_wage",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Average wage was provided for county-wage diligence.",
+        "unknown_message": "Average wage and county comparison must be confirmed.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/job-development-investment-grant-jdig"
+      }
+    ],
+    "nc-one-nc-fund": [
+      {
+        "id": "nc-onenc-state",
+        "label": "North Carolina project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["NC"],
+        "severity": "blocking",
+        "pass_message": "Project location is in North Carolina.",
+        "fail_message": "OneNC applies to North Carolina projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/one-north-carolina-fund"
+      },
+      {
+        "id": "nc-onenc-local-match",
+        "label": "Local participation",
+        "field": "metadata.local_match",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Local match context was provided.",
+        "unknown_message": "OneNC diligence should confirm local participation or matching support.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/competitive-incentives/one-north-carolina-fund"
+      }
+    ],
+    "nc-customized-training": [
+      {
+        "id": "nc-custom-training-state",
+        "label": "North Carolina training location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["NC"],
+        "severity": "blocking",
+        "pass_message": "Project location is in North Carolina.",
+        "fail_message": "North Carolina customized training applies to North Carolina projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/workforce-grants/customized-training"
+      },
+      {
+        "id": "nc-custom-training-plan",
+        "label": "Training plan",
+        "field": "metadata.training_plan",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Training plan context was provided.",
+        "unknown_message": "Training roles, skills, and delivery partner should be defined.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/workforce-grants/customized-training"
+      }
+    ],
+    "nc-job-ready-grants": [
+      {
+        "id": "nc-job-ready-jobs",
+        "label": "New jobs for workforce support",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 20,
+        "severity": "material",
+        "pass_message": "Job creation clears the catalog screening threshold.",
+        "fail_message": "Job count may be too low for this workforce grant screen.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/workforce-grants/job-ready-grants"
+      },
+      {
+        "id": "nc-job-ready-workforce-gap",
+        "label": "Recruiting or talent gap",
+        "field": "metadata.workforce_gap",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Workforce gap context was provided.",
+        "unknown_message": "Recruitment, talent-pipeline, or work-based-learning gap should be confirmed.",
+        "source_url": "https://www.commerce.nc.gov/grants-incentives/workforce-grants/job-ready-grants"
+      }
+    ],
+    "sc-job-development-credit": [
+      {
+        "id": "sc-jdc-state",
+        "label": "South Carolina project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["SC"],
+        "severity": "blocking",
+        "pass_message": "Project location is in South Carolina.",
+        "fail_message": "South Carolina Job Development Credit applies to South Carolina projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.sccommerce.com/ko/node/47"
+      },
+      {
+        "id": "sc-jdc-jobs",
+        "label": "Minimum new jobs",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 10,
+        "severity": "blocking",
+        "pass_message": "Job creation clears the published 10-job threshold.",
+        "fail_message": "Published JDC eligibility requires at least 10 new full-time jobs.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://www.sccommerce.com/ko/node/47"
+      },
+      {
+        "id": "sc-jdc-wage",
+        "label": "County average wage diligence",
+        "field": "average_wage",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Average wage was provided.",
+        "unknown_message": "County average wage comparison must be confirmed.",
+        "source_url": "https://www.sccommerce.com/ko/node/47"
+      }
+    ],
+    "sc-discretionary-infrastructure-grants": [
+      {
+        "id": "sc-infrastructure-state",
+        "label": "South Carolina project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["SC"],
+        "severity": "blocking",
+        "pass_message": "Project location is in South Carolina.",
+        "fail_message": "South Carolina discretionary infrastructure grants apply to South Carolina projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.sccommerce.com/ko/node/47"
+      },
+      {
+        "id": "sc-infrastructure-need",
+        "label": "Public infrastructure need",
+        "field": "metadata.infrastructure_need",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Infrastructure need context was provided.",
+        "unknown_message": "Road, water, sewer, site-improvement, or other eligible public need should be documented.",
+        "source_url": "https://www.sccommerce.com/ko/node/47"
+      }
+    ],
+    "sc-readysc": [
+      {
+        "id": "sc-readysc-state",
+        "label": "South Carolina training location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["SC"],
+        "severity": "blocking",
+        "pass_message": "Project location is in South Carolina.",
+        "fail_message": "readySC applies to South Carolina projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.sccommerce.com/why-sc/workforce-development/workforce-incentives"
+      },
+      {
+        "id": "sc-readysc-training-plan",
+        "label": "Training curriculum need",
+        "field": "metadata.training_plan",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Training plan context was provided.",
+        "unknown_message": "Training curriculum and technical college delivery assumptions should be defined.",
+        "source_url": "https://www.sccommerce.com/why-sc/workforce-development/workforce-incentives"
+      }
+    ],
+    "tn-fasttrack-job-training-assistance": [
+      {
+        "id": "tn-fasttrack-training-state",
+        "label": "Tennessee project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["TN"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Tennessee.",
+        "fail_message": "FastTrack applies to Tennessee projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.tn.gov/transparenttn/state-financial-overview/open-ecd/openecd/fasttrack-baseline-and-performance-reports.html"
+      },
+      {
+        "id": "tn-fasttrack-training-plan",
+        "label": "Training plan",
+        "field": "metadata.training_plan",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Training plan context was provided.",
+        "unknown_message": "FastTrack training diligence should document new-hire or incumbent-worker training needs.",
+        "source_url": "https://www.tn.gov/transparenttn/state-financial-overview/open-ecd/openecd/tnecd-performance-metrics/openecd-business-development-quick-stats/fasttrack-cost-per-job.html"
+      }
+    ],
+    "tn-fasttrack-infrastructure-development": [
+      {
+        "id": "tn-fasttrack-infrastructure-state",
+        "label": "Tennessee project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["TN"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Tennessee.",
+        "fail_message": "FastTrack applies to Tennessee projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.tn.gov/transparenttn/state-financial-overview/open-ecd/openecd/fasttrack-baseline-and-performance-reports.html"
+      },
+      {
+        "id": "tn-fasttrack-infrastructure-need",
+        "label": "Public infrastructure need",
+        "field": "metadata.infrastructure_need",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Infrastructure need context was provided.",
+        "unknown_message": "Infrastructure development need and public applicant path should be confirmed.",
+        "source_url": "https://www.tn.gov/transparenttn/state-financial-overview/open-ecd/openecd/tnecd-performance-metrics/openecd-business-development-quick-stats/fasttrack-cost-per-job.html"
+      }
+    ],
+    "tn-fasttrack-economic-development-fund": [
+      {
+        "id": "tn-fasttrack-ed-state",
+        "label": "Tennessee project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["TN"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Tennessee.",
+        "fail_message": "FastTrack applies to Tennessee projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.tn.gov/transparenttn/state-financial-overview/open-ecd/openecd/fasttrack-baseline-and-performance-reports.html"
+      },
+      {
+        "id": "tn-fasttrack-jobs",
+        "label": "Job creation commitment",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 25,
+        "severity": "material",
+        "pass_message": "Job creation is material enough for FastTrack diligence.",
+        "fail_message": "Low job creation may weaken FastTrack economic-development fit.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://www.tn.gov/transparenttn/state-financial-overview/open-ecd/openecd/tnecd-performance-metrics/openecd-business-development-quick-stats/fasttrack-cost-per-job.html"
+      }
+    ],
+    "tx-enterprise-fund": [
+      {
+        "id": "tx-tef-state",
+        "label": "Texas project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["TX"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Texas.",
+        "fail_message": "Texas Enterprise Fund applies to Texas projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://gov.texas.gov/business/page/texas-enterprise-fund"
+      },
+      {
+        "id": "tx-tef-jobs",
+        "label": "Urban job threshold screen",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 75,
+        "severity": "blocking",
+        "pass_message": "Projected job creation clears the urban 75-job first-pass TEF threshold.",
+        "fail_message": "TEF generally requires projected new job creation above 75 full-time jobs in urban areas or above 25 in rural areas.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://gov.texas.gov/business/page/texas-enterprise-fund"
+      },
+      {
+        "id": "tx-tef-competition",
+        "label": "Out-of-state competition",
+        "field": "competing_locations",
+        "operator": "present",
+        "severity": "blocking",
+        "pass_message": "Competing-location context was provided.",
+        "unknown_message": "TEF requires a Texas site to be competing with at least one viable out-of-state option before a location decision.",
+        "source_url": "https://gov.texas.gov/business/page/texas-enterprise-fund"
+      },
+      {
+        "id": "tx-tef-average-wage",
+        "label": "Average county wage diligence",
+        "field": "average_wage",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Average wage was provided.",
+        "unknown_message": "TEF diligence should confirm average wages meet or exceed the county average wage.",
+        "source_url": "https://gov.texas.gov/business/page/texas-enterprise-fund"
+      }
+    ],
+    "tx-skills-development-fund": [
+      {
+        "id": "tx-sdf-state",
+        "label": "Texas training location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["TX"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Texas.",
+        "fail_message": "Texas Skills Development Fund applies to Texas workforce projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.twc.texas.gov/programs/skills-development-fund"
+      },
+      {
+        "id": "tx-sdf-training-partner",
+        "label": "Eligible training partner",
+        "field": "metadata.training_partner",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Training partner context was provided.",
+        "unknown_message": "Confirm an eligible public college, technical college, workforce board, TEEX, or partner applicant.",
+        "source_url": "https://www.twc.texas.gov/programs/skills-development-fund"
+      }
+    ],
+    "tx-enterprise-zone-program": [
+      {
+        "id": "tx-ezp-state",
+        "label": "Texas project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["TX"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Texas.",
+        "fail_message": "Texas Enterprise Zone Program applies to Texas sites.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://gov.texas.gov/business/page/texas-enterprise-zone-program"
+      },
+      {
+        "id": "tx-ezp-local-nomination",
+        "label": "Community nomination path",
+        "field": "metadata.local_nomination",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Local nomination context was provided.",
+        "unknown_message": "Enterprise Zone diligence should confirm local community nomination and qualifying employee criteria.",
+        "source_url": "https://gov.texas.gov/business/page/texas-enterprise-zone-program"
+      }
+    ],
+    "oh-job-creation-tax-credit": [
+      {
+        "id": "oh-jctc-state",
+        "label": "Ohio project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["OH"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Ohio.",
+        "fail_message": "Ohio Job Creation Tax Credit applies to Ohio projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements"
+      },
+      {
+        "id": "oh-jctc-jobs",
+        "label": "Minimum created jobs",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 10,
+        "severity": "blocking",
+        "pass_message": "Job creation clears the published 10-job threshold.",
+        "fail_message": "Ohio JCTC eligibility includes creating at least 10 jobs within three years.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements"
+      },
+      {
+        "id": "oh-jctc-payroll",
+        "label": "Annual payroll diligence",
+        "field": "metadata.annual_payroll",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Annual payroll context was provided.",
+        "unknown_message": "Confirm created-job payroll against the current program threshold.",
+        "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements"
+      }
+    ],
+    "oh-jobsohio-workforce-grant": [
+      {
+        "id": "oh-workforce-state",
+        "label": "Ohio project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["OH"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Ohio.",
+        "fail_message": "JobsOhio workforce assistance applies to Ohio projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements"
+      },
+      {
+        "id": "oh-workforce-training",
+        "label": "Training need",
+        "field": "metadata.training_plan",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Training plan context was provided.",
+        "unknown_message": "JobsOhio workforce diligence should confirm training, job creation, and timing requirements.",
+        "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements"
+      }
+    ],
+    "oh-jobsohio-revitalization-program": [
+      {
+        "id": "oh-revitalization-state",
+        "label": "Ohio project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["OH"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Ohio.",
+        "fail_message": "JobsOhio revitalization assistance applies to Ohio sites.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements"
+      },
+      {
+        "id": "oh-revitalization-site",
+        "label": "Site redevelopment need",
+        "field": "metadata.site_redevelopment_need",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Redevelopment need context was provided.",
+        "unknown_message": "Confirm brownfield, building, or site-revitalization facts and job-creation likelihood.",
+        "source_url": "https://www.jobsohio.com/incentives-programs/incentives-eligibility-requirements"
+      }
+    ],
+    "in-edge-tax-credit": [
+      {
+        "id": "in-edge-state",
+        "label": "Indiana project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["IN"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Indiana.",
+        "fail_message": "EDGE applies to Indiana projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://iedc.in.gov/indiana-advantages/investments/economic-development-for-a-growing-economy-tax-credit/overview"
+      },
+      {
+        "id": "in-edge-jobs",
+        "label": "Job creation commitment",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 10,
+        "severity": "material",
+        "pass_message": "Job creation is present for EDGE diligence.",
+        "fail_message": "Low job creation may weaken EDGE fit.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://iedc.in.gov/indiana-advantages/investments/economic-development-for-a-growing-economy-tax-credit/overview"
+      }
+    ],
+    "in-skills-enhancement-fund": [
+      {
+        "id": "in-sef-state",
+        "label": "Indiana training location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["IN"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Indiana.",
+        "fail_message": "Skills Enhancement Fund applies to Indiana projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://iedc.in.gov/indiana-advantages/investments/skills-enhancement-fund-sef/overview"
+      },
+      {
+        "id": "in-sef-training-credential",
+        "label": "Credential or specialized training plan",
+        "field": "metadata.training_plan",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Training plan context was provided.",
+        "unknown_message": "Confirm whether training leads to credentials, recognized industry training, specialized company training, or wage increases.",
+        "source_url": "https://iedc.in.gov/indiana-advantages/investments/skills-enhancement-fund-sef/overview"
+      }
+    ],
+    "in-hoosier-business-investment-tax-credit": [
+      {
+        "id": "in-hbi-state",
+        "label": "Indiana project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["IN"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Indiana.",
+        "fail_message": "HBI applies to Indiana projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://iedc.in.gov/indiana-advantages/investments/hoosier-business-investment-tax-credit/overview"
+      },
+      {
+        "id": "in-hbi-capex",
+        "label": "Capital investment",
+        "field": "capex",
+        "operator": "gte",
+        "value": 1000000,
+        "severity": "material",
+        "pass_message": "Capital investment is material enough for HBI diligence.",
+        "fail_message": "Capital investment may be too low for HBI fit.",
+        "unknown_message": "Capital investment is missing.",
+        "source_url": "https://iedc.in.gov/indiana-advantages/investments/hoosier-business-investment-tax-credit/overview"
+      }
+    ],
+    "alabama-jobs-act-jobs-credit": [
+      {
+        "id": "al-jobs-act-state",
+        "label": "Alabama project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["AL"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Alabama.",
+        "fail_message": "Alabama Jobs Act incentives apply to Alabama projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.madeinalabama.com/resources/documents/job-acts-summary/"
+      },
+      {
+        "id": "al-jobs-act-jobs",
+        "label": "Non-targeted county job threshold",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 50,
+        "severity": "material",
+        "pass_message": "Job creation clears the non-targeted county first-pass threshold.",
+        "fail_message": "Projects in non-targeted counties generally need 50 net new full-time jobs; targeted, jumpstart, or technology projects may use lower thresholds.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://www.madeinalabama.com/resources/documents/job-acts-summary/"
+      }
+    ],
+    "alabama-jobs-act-investment-credit": [
+      {
+        "id": "al-investment-credit-state",
+        "label": "Alabama project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["AL"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Alabama.",
+        "fail_message": "Alabama Investment Credit applies to Alabama projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://www.revenue.alabama.gov/tax-incentives/investment-credit/"
+      },
+      {
+        "id": "al-investment-credit-approval",
+        "label": "Commerce approval path",
+        "field": "metadata.agency_contact",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Agency-contact context was provided.",
+        "unknown_message": "Confirm Alabama Department of Commerce project approval path and agreement timing.",
+        "source_url": "https://www.revenue.alabama.gov/tax-incentives/investment-credit/"
+      }
+    ],
+    "ky-business-investment-program": [
+      {
+        "id": "ky-kbi-state",
+        "label": "Kentucky project location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["KY"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Kentucky.",
+        "fail_message": "KBI applies to Kentucky projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://newkentuckyhome.ky.gov/Locating_Expanding/kybizince.aspx"
+      },
+      {
+        "id": "ky-kbi-jobs",
+        "label": "Job creation screen",
+        "field": "jobs",
+        "operator": "gte",
+        "value": 10,
+        "severity": "material",
+        "pass_message": "Job creation clears the GrantStack KBI screening threshold.",
+        "fail_message": "Job creation may be too low for KBI fit.",
+        "unknown_message": "Job count is missing.",
+        "source_url": "https://newkentuckyhome.ky.gov/Locating_Expanding/kybizince.aspx"
+      }
+    ],
+    "ky-bluegrass-state-skills-corporation": [
+      {
+        "id": "ky-bssc-state",
+        "label": "Kentucky training location",
+        "field": "state",
+        "operator": "state_in",
+        "value": ["KY"],
+        "severity": "blocking",
+        "pass_message": "Project location is in Kentucky.",
+        "fail_message": "BSSC applies to Kentucky workforce projects.",
+        "unknown_message": "State could not be confirmed from the project location.",
+        "source_url": "https://newkentuckyhome.ky.gov/Workforce/BSSC"
+      },
+      {
+        "id": "ky-bssc-training-plan",
+        "label": "Employer-driven training plan",
+        "field": "metadata.training_plan",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Training plan context was provided.",
+        "unknown_message": "Confirm occupational or skills-upgrade training scope and approval timing.",
+        "source_url": "https://newkentuckyhome.ky.gov/Workforce/BSSC"
+      }
+    ],
+    "eda-public-works": [
+      {
+        "id": "eda-public-applicant",
+        "label": "Eligible public or nonprofit applicant",
+        "field": "metadata.public_applicant",
+        "operator": "present",
+        "severity": "blocking",
+        "pass_message": "Public or nonprofit applicant context was provided.",
+        "unknown_message": "EDA Public Works usually requires an eligible public or nonprofit applicant, not only a private company.",
+        "source_url": "https://simpler.grants.gov/opportunity/b5365cea-b07c-4e8d-8313-e23ab0fd3766"
+      },
+      {
+        "id": "eda-public-infrastructure",
+        "label": "Public infrastructure need",
+        "field": "metadata.infrastructure_need",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Infrastructure need context was provided.",
+        "unknown_message": "Document the public infrastructure gap, eligible applicant, match, and regional strategy fit.",
+        "source_url": "https://simpler.grants.gov/opportunity/b5365cea-b07c-4e8d-8313-e23ab0fd3766"
+      }
+    ],
+    "eda-economic-adjustment-assistance": [
+      {
+        "id": "eda-eaa-public-applicant",
+        "label": "Eligible applicant",
+        "field": "metadata.public_applicant",
+        "operator": "present",
+        "severity": "blocking",
+        "pass_message": "Public or nonprofit applicant context was provided.",
+        "unknown_message": "EDA EAA diligence should confirm an eligible applicant and public-benefit strategy.",
+        "source_url": "https://simpler.grants.gov/opportunity/b5365cea-b07c-4e8d-8313-e23ab0fd3766"
+      },
+      {
+        "id": "eda-eaa-regional-strategy",
+        "label": "Regional economic strategy alignment",
+        "field": "metadata.regional_strategy",
+        "operator": "present",
+        "severity": "material",
+        "pass_message": "Regional strategy context was provided.",
+        "unknown_message": "Confirm CEDS or equivalent regional strategy alignment before EDA pursuit.",
+        "source_url": "https://simpler.grants.gov/opportunity/b5365cea-b07c-4e8d-8313-e23ab0fd3766"
+      }
+    ]
+  }
+}
