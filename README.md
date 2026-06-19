@@ -9,6 +9,43 @@ GrantStack turns a rough expansion plan into a cited first-pass incentive strate
 **Backend API:** https://rx967db2q9.execute-api.us-east-1.amazonaws.com/projects<br>
 **Sample report:** https://grantstack.pages.dev/report?sample=true
 
+## Architecture
+
+![AWS Architecture](docs/architecture_aws.png)
+
+GrantStack is a serverless AWS portfolio build with a static Cloudflare Pages frontend, API Gateway HTTP API, focused Lambda handlers, SQS-based async processing, DynamoDB report storage, an S3-backed source catalog, scheduled source refresh, and CloudWatch/X-Ray observability. The architecture is designed to accept requests quickly, isolate failures, keep idle cost low, and preserve a clear security boundary between intake, processing, reporting, analytics, and optional provider integrations.
+
+Render the diagram locally with:
+
+```sh
+pip install -r requirements.txt
+python docs/architecture_aws.py
+```
+
+Graphviz must be installed on the machine rendering the diagram because Python Diagrams uses Graphviz under the hood.
+
+<details>
+<summary>Detailed request flow</summary>
+
+```mermaid
+flowchart LR
+  User["Expansion Team"] --> Site["Cloudflare Pages Intake"]
+  Site --> Api["API Gateway HTTP API"]
+  Api --> Ingest["Ingestion Lambda"]
+  Ingest --> Queue["SQS Queue"]
+  Queue --> Processor["Processor Lambda"]
+  Processor --> Catalog["S3 Source Catalog"]
+  Processor -. prod-ready .-> Vector["Pinecone / Vector DB"]
+  Processor -. prod-ready .-> LLM["OpenAI / Anthropic"]
+  Processor --> DDB["DynamoDB On-Demand"]
+  Site --> Report["Private Report Page"]
+  Report --> Api
+  Site --> Analytics["Analytics Lambda"]
+  Analytics --> AnalyticsDDB["DynamoDB On-Demand Analytics"]
+```
+
+</details>
+
 ## The Problem
 
 Manufacturers, logistics operators, energy companies, and other capex-heavy businesses often make site and expansion decisions before they have a clear read on public funding.
@@ -69,22 +106,7 @@ The deployed demo is an end-to-end product flow:
 7. The report page polls the private tokenized endpoint and renders the result.
 8. First-party analytics events are posted to `/analytics` for page views, CTA clicks, sample-report views, submission outcomes, and report actions.
 
-```mermaid
-flowchart LR
-  User["Expansion Team"] --> Site["Cloudflare Pages Intake"]
-  Site --> Api["API Gateway HTTP API"]
-  Api --> Ingest["Ingestion Lambda"]
-  Ingest --> Queue["SQS Queue"]
-  Queue --> Processor["Processor Lambda"]
-  Processor --> Catalog["S3 Source Catalog"]
-  Processor -. prod-ready .-> Vector["Pinecone / Vector DB"]
-  Processor -. prod-ready .-> LLM["OpenAI / Anthropic"]
-  Processor --> DDB["DynamoDB On-Demand"]
-  Site --> Report["Private Report Page"]
-  Report --> Api
-  Site --> Analytics["Analytics Lambda"]
-  Analytics --> AnalyticsDDB["DynamoDB On-Demand Analytics"]
-```
+See the Architecture section above for the polished AWS diagram and the collapsed detailed flow.
 
 ## Why This Is Not Just A Prompt Demo
 
@@ -176,6 +198,10 @@ This repo is designed to show practical full-stack cloud engineering judgment:
 
 ## Repository Layout
 
+- `docs/architecture_aws.py` - Python Diagrams renderer for the AWS architecture diagram.
+- `docs/architecture_aws.png` - AWS architecture diagram for README and portfolio surfaces.
+- `docs/architecture_aws.svg` - SVG architecture diagram export/fallback.
+- `docs/architecture-notes.md` - request flow, CI/CD, security, observability, cost, and teardown notes.
 - `grantstack-backend/ARCHITECTURE.md` - architecture blueprint and operational notes.
 - `grantstack-backend/terraform/` - AWS serverless infrastructure.
 - `grantstack-backend/lambda/` - Python Lambda handlers.
@@ -190,6 +216,7 @@ Prerequisites:
 - AWS credentials with permissions to manage API Gateway, Lambda, SQS, DynamoDB, IAM, CloudWatch, S3, and EventBridge.
 - Terraform installed.
 - Python 3 available locally.
+- Graphviz installed locally when rendering `docs/architecture_aws.py`.
 
 Bootstrap remote state once per AWS account:
 
@@ -230,6 +257,7 @@ terraform -chdir=grantstack-backend/terraform fmt -check -recursive
 terraform -chdir=grantstack-backend/terraform validate
 grantstack-backend/scripts/sync_vector_index.py --dry-run --limit 3
 grantstack-backend/scripts/smoke_test.py --timeout 180 --interval 5
+python docs/architecture_aws.py
 ```
 
 ## Provider Mode Corpus And Vector Index
