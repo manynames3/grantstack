@@ -23,6 +23,7 @@ aws sqs receive-message \
   --attribute-names All \
   --message-attribute-names All \
   --max-number-of-messages 1 \
+  --wait-time-seconds 20 \
   --visibility-timeout 30
 ```
 

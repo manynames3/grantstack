@@ -181,6 +181,7 @@ This repo is designed to show practical full-stack cloud engineering judgment:
 - `grantstack-backend/lambda/` - Python Lambda handlers.
 - `grantstack-backend/scripts/smoke_test.py` - public API workflow smoke test.
 - `grantstack-backend/docs/DLQ_REPLAY_RUNBOOK.md` - dead-letter queue recovery runbook.
+- `grantstack-backend/docs/SQS_WORKER_RUNBOOK.md` - intentional dev worker operation and empty-receive monitoring.
 - `grantstack-landing/` - Cloudflare Pages static site.
 
 ## Backend Deploy
@@ -228,6 +229,7 @@ python3 -m py_compile grantstack-backend/scripts/sync_vector_index.py
 python3 -m unittest discover -s grantstack-backend/tests
 terraform -chdir=grantstack-backend/terraform fmt -check -recursive
 terraform -chdir=grantstack-backend/terraform validate
+terraform -chdir=grantstack-backend/terraform test
 grantstack-backend/scripts/sync_vector_index.py --dry-run --limit 3
 grantstack-backend/scripts/smoke_test.py --timeout 180 --interval 5
 ```
@@ -309,7 +311,7 @@ The infrastructure is designed for near-zero idle cost:
 - API Gateway HTTP API charges only by request.
 - API Gateway stage throttling reduces accidental or abusive request bursts.
 - Lambda charges only during execution.
-- SQS charges by request.
+- SQS charges by request. The dev Lambda poller is disabled by default; set `enable_sqs_worker = true` and apply only when dev queue processing is intentional.
 - DynamoDB uses `PAY_PER_REQUEST`.
 - DynamoDB TTL is enabled on `expires_at` so pilot project and analytics data can age out automatically.
 - CloudWatch Logs, dashboards, alarms, X-Ray traces, S3 catalog storage, and remote Terraform state may create small charges as usage grows.

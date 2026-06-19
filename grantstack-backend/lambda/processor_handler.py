@@ -59,8 +59,17 @@ def lambda_handler(event: Mapping[str, Any], context: Any) -> Dict[str, List[Dic
     config = load_config()
     table = dynamodb.Table(config.table_name)
     failed_items: List[Dict[str, str]] = []
+    records = event.get("Records", [])
 
-    for record in event.get("Records", []):
+    logger.info(
+        "sqs_worker_started queue=%s wait_time_seconds=%s idle_backoff=%s batch_size=%s",
+        os.environ.get("SQS_QUEUE_NAME", "unknown"),
+        os.environ.get("SQS_RECEIVE_WAIT_TIME_SECS", "20"),
+        os.environ.get("SQS_IDLE_BACKOFF_MODE", "aws-lambda-managed"),
+        len(records),
+    )
+
+    for record in records:
         message_id = record.get("messageId", "unknown-message")
         try:
             asyncio.run(process_record(record, table, config))

@@ -33,6 +33,9 @@ jobs:
       - name: Terraform validate
         run: terraform -chdir=grantstack-backend/terraform validate
 
+      - name: Terraform tests
+        run: terraform -chdir=grantstack-backend/terraform test
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:

@@ -38,6 +38,7 @@ enable_xray_tracing        = true
 enable_api_access_logs     = true
 enable_cloudwatch_dashboard = true
 enable_source_refresh      = true
+enable_sqs_worker          = false
 
 processor_memory_size          = 1024
 processor_timeout_seconds      = 900
