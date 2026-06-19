@@ -71,6 +71,13 @@ variable "sqs_visibility_timeout_seconds" {
   default     = 960
 }
 
+variable "enable_sqs_worker" {
+  description = "Enable the Lambda SQS processor poller. Defaults to false in dev and true in other environments."
+  type        = bool
+  default     = null
+  nullable    = true
+}
+
 variable "sqs_message_retention_seconds" {
   description = "Processing queue message retention in seconds."
   type        = number

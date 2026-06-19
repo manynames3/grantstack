@@ -14,6 +14,8 @@ GrantStack uses a fully asynchronous, decoupled serverless workflow designed for
 8. A scheduled Source Refresh Lambda verifies official source URLs, records retrieval status and content hashes, and writes the active catalog to S3.
 9. The frontend posts privacy-light product events to `POST /analytics`; the Analytics Lambda validates and stores them in a separate on-demand DynamoDB table with TTL.
 
+The SQS event source mapping is disabled by default in `dev` and requires `enable_sqs_worker = true` for intentional processing. Staging and production remain enabled by default. Messages sent while the dev mapping is disabled remain queued until processing is enabled.
+
 ```mermaid
 flowchart LR
   Client["Client"] --> Api["API Gateway HTTP API"]
@@ -37,7 +39,7 @@ flowchart LR
 
 - API Gateway HTTP API has no provisioned gateway capacity.
 - Lambda uses no provisioned concurrency and is not attached to a VPC, avoiding NAT gateway idle cost.
-- SQS charges per request and stores messages only while work exists.
+- SQS charges per request. Dev disables the Lambda event source mapping by default so managed pollers do not issue empty receives while idle.
 - DynamoDB uses `PAY_PER_REQUEST`; there is no provisioned read/write capacity.
 - The analytics table also uses `PAY_PER_REQUEST` and TTL, preserving the same zero-idle compute posture for product telemetry.
 - CloudWatch log groups use explicit retention.

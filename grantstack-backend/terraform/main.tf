@@ -22,10 +22,12 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 locals {
-  name_prefix                = "${var.project_name}-${var.environment}"
-  dynamodb_table_name        = coalesce(var.dynamodb_table_name, "${local.name_prefix}-projects")
-  analytics_table_name       = coalesce(var.analytics_table_name, "${local.name_prefix}-analytics")
-  source_catalog_bucket_name = coalesce(var.source_catalog_bucket_name, "${local.name_prefix}-source-catalog-${data.aws_caller_identity.current.account_id}")
+  name_prefix                   = "${var.project_name}-${var.environment}"
+  dynamodb_table_name           = coalesce(var.dynamodb_table_name, "${local.name_prefix}-projects")
+  analytics_table_name          = coalesce(var.analytics_table_name, "${local.name_prefix}-analytics")
+  source_catalog_bucket_name    = coalesce(var.source_catalog_bucket_name, "${local.name_prefix}-source-catalog-${data.aws_caller_identity.current.account_id}")
+  sqs_receive_wait_time_seconds = 20
+  sqs_worker_enabled            = var.enable_sqs_worker != null ? var.enable_sqs_worker : var.environment != "dev"
   external_secret_arns = compact([
     var.vector_db_api_key_secret_arn,
     var.embedding_api_key_secret_arn,
@@ -111,6 +113,7 @@ data "archive_file" "source_refresh_lambda" {
 resource "aws_sqs_queue" "processing_dlq" {
   name                      = "${local.name_prefix}-processing-dlq"
   message_retention_seconds = 1209600
+  receive_wait_time_seconds = local.sqs_receive_wait_time_seconds
   sqs_managed_sse_enabled   = true
 
   tags = local.common_tags
@@ -120,7 +123,7 @@ resource "aws_sqs_queue" "processing" {
   name                       = "${local.name_prefix}-processing"
   visibility_timeout_seconds = var.sqs_visibility_timeout_seconds
   message_retention_seconds  = var.sqs_message_retention_seconds
-  receive_wait_time_seconds  = 20
+  receive_wait_time_seconds  = local.sqs_receive_wait_time_seconds
   sqs_managed_sse_enabled    = true
 
   redrive_policy = jsonencode({
@@ -701,6 +704,9 @@ resource "aws_lambda_function" "processor" {
       LLM_MODEL                    = var.llm_model
       MOCK_EXTERNAL_CALLS          = tostring(var.mock_external_calls)
       HTTP_CLIENT_TIMEOUT_SECS     = tostring(var.http_client_timeout_seconds)
+      SQS_QUEUE_NAME               = aws_sqs_queue.processing.name
+      SQS_RECEIVE_WAIT_TIME_SECS   = tostring(local.sqs_receive_wait_time_seconds)
+      SQS_IDLE_BACKOFF_MODE        = "aws-lambda-managed"
     }
   }
 
@@ -814,12 +820,13 @@ resource "aws_lambda_function" "source_refresh" {
 }
 
 resource "aws_lambda_event_source_mapping" "processor_sqs" {
-  event_source_arn                   = aws_sqs_queue.processing.arn
-  function_name                      = aws_lambda_function.processor.arn
+  event_source_arn = aws_sqs_queue.processing.arn
+  function_name    = aws_lambda_function.processor.arn
+  # One report can use the full processor timeout, so larger batches risk visibility expiry.
   batch_size                         = 1
   maximum_batching_window_in_seconds = 0
   function_response_types            = ["ReportBatchItemFailures"]
-  enabled                            = true
+  enabled                            = local.sqs_worker_enabled
 }
 
 resource "aws_cloudwatch_event_rule" "source_refresh" {
@@ -1262,6 +1269,7 @@ resource "aws_cloudwatch_dashboard" "grantstack" {
             metrics = [
               ["AWS/SQS", "ApproximateNumberOfMessagesVisible", "QueueName", aws_sqs_queue.processing.name, { stat = "Maximum", label = "Processing visible" }],
               [".", "ApproximateAgeOfOldestMessage", ".", aws_sqs_queue.processing.name, { stat = "Maximum", label = "Oldest age" }],
+              [".", "NumberOfEmptyReceives", ".", aws_sqs_queue.processing.name, { stat = "Sum", label = "Empty receives" }],
               [".", "ApproximateNumberOfMessagesVisible", ".", aws_sqs_queue.processing_dlq.name, { stat = "Maximum", label = "DLQ visible" }]
             ]
             period = 60
@@ -1365,6 +1373,11 @@ output "processing_queue_url" {
 output "processing_queue_arn" {
   description = "SQS processing queue ARN."
   value       = aws_sqs_queue.processing.arn
+}
+
+output "sqs_worker_enabled" {
+  description = "Whether the Lambda SQS event source mapping is actively polling the processing queue."
+  value       = local.sqs_worker_enabled
 }
 
 output "processing_dlq_url" {
