@@ -3084,13 +3084,14 @@ html:has(body.landing-positivus) {
 }
 
 .landing-positivus .hero-grid {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr));
-  gap: 56px;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(390px, 0.78fr);
+  gap: 28px 56px;
+  align-items: start;
   padding: 54px 0 44px;
 }
 
 .landing-positivus .hero-copy-block {
+  grid-column: 1;
   max-width: 720px;
 }
 
@@ -3121,6 +3122,40 @@ html:has(body.landing-positivus) {
   color: var(--pos-soft);
   font-size: 1.16rem;
   line-height: 1.58;
+}
+
+.landing-positivus .hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: min(680px, 100%);
+  margin-top: 26px;
+}
+
+.landing-positivus .hero-metrics div {
+  min-height: 94px;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  border: 1.5px solid var(--pos-line);
+  border-radius: 20px;
+  padding: 14px 16px;
+  background: var(--pos-white);
+  box-shadow: 0 4px 0 var(--pos-ink);
+}
+
+.landing-positivus .hero-metrics strong {
+  color: var(--pos-ink);
+  font-size: clamp(1.45rem, 2.2vw, 2.05rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.landing-positivus .hero-metrics span {
+  color: var(--pos-soft);
+  font-size: 0.84rem;
+  font-weight: 850;
+  line-height: 1.25;
 }
 
 .landing-positivus .hero-bullets {
@@ -3172,6 +3207,8 @@ html:has(body.landing-positivus) {
 
 .landing-positivus .hero-intake {
   position: relative;
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }
 
 .landing-positivus .hero-intake::before {
@@ -3205,6 +3242,67 @@ html:has(body.landing-positivus) {
 .landing-positivus .hero-intake-form {
   padding: 28px;
   background: var(--pos-white);
+}
+
+.landing-positivus .hero-product {
+  grid-column: 1;
+  width: min(680px, 100%);
+  border: 1.5px solid var(--pos-line);
+  border-radius: 28px;
+  color: var(--pos-ink);
+  background: var(--pos-card);
+  box-shadow: 0 6px 0 var(--pos-ink);
+  overflow: hidden;
+}
+
+.landing-positivus .product-topline {
+  border-bottom: 1.5px solid rgba(25, 26, 35, 0.18);
+  background: var(--pos-ink);
+}
+
+.landing-positivus .product-topline span {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.landing-positivus .product-topline strong {
+  color: var(--pos-ink);
+  background: var(--pos-lime);
+}
+
+.landing-positivus .product-input p {
+  color: var(--pos-ink);
+}
+
+.landing-positivus .product-input dl div,
+.landing-positivus .pipeline-row,
+.landing-positivus .product-output div {
+  border-color: rgba(25, 26, 35, 0.16);
+}
+
+.landing-positivus .product-input dl div {
+  background: var(--pos-white);
+}
+
+.landing-positivus .product-input dt,
+.landing-positivus .product-output span {
+  color: var(--pos-soft);
+}
+
+.landing-positivus .product-input dd,
+.landing-positivus .pipeline-row span {
+  color: var(--pos-ink);
+}
+
+.landing-positivus .pipeline-row {
+  background: #eff8df;
+}
+
+.landing-positivus .pipeline-row span {
+  border-color: rgba(25, 26, 35, 0.16);
+}
+
+.landing-positivus .product-output strong {
+  color: var(--pos-ink);
 }
 
 .landing-positivus .form-heading {
@@ -3247,6 +3345,13 @@ html:has(body.landing-positivus) {
 .landing-positivus input:focus {
   border-color: var(--pos-line);
   outline: 3px solid rgba(185, 255, 102, 0.55);
+}
+
+.landing-positivus .optional-field span::after {
+  content: " optional";
+  color: rgba(25, 26, 35, 0.48);
+  font-size: 0.78rem;
+  font-weight: 750;
 }
 
 .landing-positivus .ack-field {
@@ -3293,6 +3398,7 @@ html:has(body.landing-positivus) {
 }
 
 .landing-positivus .pas-section,
+.landing-positivus .deliverables-section,
 .landing-positivus .coverage-section,
 .landing-positivus .output-section,
 .landing-positivus .cost-section,
@@ -3301,6 +3407,67 @@ html:has(body.landing-positivus) {
   padding: 76px 0;
   color: var(--pos-ink);
   background: transparent;
+}
+
+.landing-positivus .deliverables-section {
+  padding-top: 42px;
+}
+
+.landing-positivus .deliverables-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 40px;
+  align-items: start;
+  border: 1.5px solid var(--pos-line);
+  border-radius: 30px;
+  padding: 34px;
+  background: var(--pos-ink);
+  box-shadow: 0 6px 0 var(--pos-lime);
+}
+
+.landing-positivus .deliverables-grid h2 {
+  margin-top: 18px;
+  color: var(--pos-white);
+  font-size: clamp(1.75rem, 2.8vw, 2.65rem);
+}
+
+.landing-positivus .deliverable-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.landing-positivus .deliverable-list article {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-height: 190px;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 22px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.landing-positivus .deliverable-list span {
+  width: max-content;
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: var(--pos-ink);
+  background: var(--pos-lime);
+  font-weight: 950;
+}
+
+.landing-positivus .deliverable-list h3,
+.landing-positivus .deliverable-list p {
+  margin: 0;
+}
+
+.landing-positivus .deliverable-list h3 {
+  color: var(--pos-white);
+}
+
+.landing-positivus .deliverable-list p {
+  color: rgba(255, 255, 255, 0.74);
 }
 
 .landing-positivus .pas-heading,
@@ -4203,6 +4370,7 @@ html:has(body.landing-positivus) {
   }
 
   .landing-positivus .hero-grid,
+  .landing-positivus .deliverables-grid,
   .landing-positivus .coverage-layout,
   .landing-positivus .output-layout,
   .landing-positivus .case-heading,
@@ -4210,6 +4378,15 @@ html:has(body.landing-positivus) {
   .landing-positivus .make-happen-card,
   .landing-positivus .faq-layout {
     grid-template-columns: 1fr;
+  }
+
+  .landing-positivus .hero-copy-block,
+  .landing-positivus .hero-intake,
+  .landing-positivus .hero-product {
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+    max-width: none;
   }
 
   .landing-positivus .case-study-band article,
@@ -4230,7 +4407,8 @@ html:has(body.landing-positivus) {
   }
 
   .landing-positivus .pas-grid,
-  .landing-positivus .coverage-grid {
+  .landing-positivus .coverage-grid,
+  .landing-positivus .deliverable-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -4258,6 +4436,12 @@ html:has(body.landing-positivus) {
   .landing-positivus .hero-intake-form,
   .landing-positivus .field-grid,
   .landing-positivus .compact-field-grid,
+  .landing-positivus .hero-metrics,
+  .landing-positivus .product-input dl,
+  .landing-positivus .pipeline-row,
+  .landing-positivus .product-output,
+  .landing-positivus .deliverables-grid,
+  .landing-positivus .deliverable-list,
   .landing-positivus .pas-grid,
   .landing-positivus .coverage-grid,
   .landing-positivus .output-layout,
@@ -4318,7 +4502,13 @@ html:has(body.landing-positivus) {
   }
 
   .landing-positivus .hero-actions {
-    display: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .landing-positivus .hero-actions .button {
+    width: 100%;
   }
 
   .landing-positivus .hero-intake::before {
@@ -4328,6 +4518,32 @@ html:has(body.landing-positivus) {
   .landing-positivus .hero-intake-form {
     padding: 20px;
     border-radius: 24px;
+  }
+
+  .landing-positivus .hero-product,
+  .landing-positivus .deliverables-grid {
+    border-radius: 24px;
+  }
+
+  .landing-positivus .hero-metrics div {
+    min-height: 78px;
+  }
+
+  .landing-positivus .product-input,
+  .landing-positivus .product-output div {
+    padding: 16px;
+  }
+
+  .landing-positivus .pipeline-row span {
+    min-height: 44px;
+    justify-content: flex-start;
+    padding: 12px 16px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(25, 26, 35, 0.16);
+  }
+
+  .landing-positivus .pipeline-row span:last-child {
+    border-bottom: 0;
   }
 
   .landing-positivus .form-heading {
@@ -4399,6 +4615,7 @@ html:has(body.landing-positivus) {
   }
 
   .landing-positivus .pas-section,
+  .landing-positivus .deliverables-section,
   .landing-positivus .coverage-section,
   .landing-positivus .output-section,
   .landing-positivus .cost-section,
@@ -4408,6 +4625,14 @@ html:has(body.landing-positivus) {
   }
 
   .landing-positivus .pas-grid article {
+    min-height: 0;
+  }
+
+  .landing-positivus .deliverables-grid {
+    padding: 24px;
+  }
+
+  .landing-positivus .deliverable-list article {
     min-height: 0;
   }
 

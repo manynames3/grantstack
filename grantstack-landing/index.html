@@ -9,7 +9,7 @@
     />
     <title>GrantStack | Incentive Diligence for Capital Projects</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=service-art-20260524" />
+    <link rel="stylesheet" href="styles.css?v=landing-polish-20260711" />
   </head>
   <body class="landing-positivus">
     <header class="site-header" aria-label="Primary navigation">
@@ -43,6 +43,20 @@
               GrantStack turns rough project specs into a source-backed incentive diligence memo: likely incentive
               paths, missing facts, ROI scenarios, and the review steps required before anyone relies on the numbers.
             </p>
+            <div class="hero-metrics" aria-label="GrantStack pilot proof points">
+              <div>
+                <strong>28</strong>
+                <span>curated program sources</span>
+              </div>
+              <div>
+                <strong>9</strong>
+                <span>industrial states screened</span>
+              </div>
+              <div>
+                <strong>60 min</strong>
+                <span>executive readout</span>
+              </div>
+            </div>
             <ul class="hero-bullets" aria-label="GrantStack executive outcomes">
               <li>See the incentive stack before site and budget decisions harden.</li>
               <li>Pressure-test CHIPS, IRA, state, local, workforce, utility, and infrastructure fit.</li>
@@ -100,6 +114,22 @@
                   <span>Corporate email</span>
                   <input name="contact_email" type="email" autocomplete="email" required placeholder="tax@company.com" />
                 </label>
+                <label class="full-field optional-field">
+                  <span>Company or project name</span>
+                  <input name="company_name" autocomplete="organization" placeholder="Northstar Components" />
+                </label>
+                <label>
+                  <span>Average wage</span>
+                  <input name="average_wage" type="number" min="1" step="1" placeholder="92000" />
+                </label>
+                <label>
+                  <span>Decision timeline</span>
+                  <input name="project_timeline" placeholder="120-day site decision" />
+                </label>
+                <label class="full-field optional-field">
+                  <span>Competing locations</span>
+                  <input name="competing_locations" placeholder="IN, KY, Germany" />
+                </label>
                 <label class="ack-field full-field">
                   <input name="screening_acknowledgement" type="checkbox" required />
                   <span>
@@ -116,13 +146,86 @@
               </p>
             </form>
           </aside>
+          <aside class="hero-product" aria-label="GrantStack product snapshot">
+            <div class="product-topline">
+              <span>Live packet preview</span>
+              <strong>source-backed</strong>
+            </div>
+            <div class="product-input">
+              <p>Project facts</p>
+              <dl>
+                <div>
+                  <dt>Facility</dt>
+                  <dd>Semiconductor supplier</dd>
+                </div>
+                <div>
+                  <dt>Location</dt>
+                  <dd>Columbus, OH</dd>
+                </div>
+                <div>
+                  <dt>Capex</dt>
+                  <dd>$420M</dd>
+                </div>
+                <div>
+                  <dt>Jobs</dt>
+                  <dd>180</dd>
+                </div>
+              </dl>
+            </div>
+            <div class="pipeline-row" aria-label="Processing workflow">
+              <span>Intake validated</span>
+              <span>Sources checked</span>
+              <span>Review packet</span>
+            </div>
+            <div class="product-output">
+              <div>
+                <span>Fit score</span>
+                <strong>84 / 100</strong>
+              </div>
+              <div>
+                <span>Open diligence</span>
+                <strong>6 material unknowns</strong>
+              </div>
+            </div>
+          </aside>
         </div>
 
         <div class="section-inner proof-rail" aria-label="Product proof points">
-          <span>CHIPS 48D deadline</span>
-          <span>Sample packet available</span>
-          <span>$15k paid pilot</span>
+          <span>API-backed intake</span>
+          <span>Cited source packet</span>
+          <span>Fixed-fee pilot</span>
           <span>Expert review required</span>
+        </div>
+      </section>
+
+      <section class="deliverables-section" aria-labelledby="deliverables-heading">
+        <div class="section-inner deliverables-grid">
+          <div>
+            <p class="section-label">Pilot deliverables</p>
+            <h2 id="deliverables-heading">A complete packet your finance team can actually use.</h2>
+          </div>
+          <div class="deliverable-list" aria-label="Paid pilot deliverables">
+            <article>
+              <span>01</span>
+              <h3>Source index</h3>
+              <p>Official federal, state, local, workforce, utility, and infrastructure sources used in the screen.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Eligibility map</h3>
+              <p>Program fit, blockers, unknowns, timing exposure, and project facts required before reliance.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Executive memo</h3>
+              <p>Board-ready narrative with ROI scenario, assumptions, risk flags, and recommended next diligence.</p>
+            </article>
+            <article>
+              <span>04</span>
+              <h3>Review handoff</h3>
+              <p>Questions for CPA, tax, legal, grants, or agency specialists before applications or public claims.</p>
+            </article>
+          </div>
         </div>
       </section>
 
